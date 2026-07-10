@@ -1,13 +1,9 @@
 import { ClipboardList, FileText, Github, Globe } from "lucide-react";
-import { profile, type Project } from "@/data/content";
+import type { Project } from "@/data/content";
 import { cn } from "@/lib/utils";
 
 function isValidLink(url: string | null | undefined): url is string {
   return Boolean(url && url !== "#");
-}
-
-function getGithubUrl(project: Project): string {
-  return isValidLink(project.github) ? project.github! : profile.github;
 }
 
 interface ProjectActionsProps {
@@ -16,22 +12,25 @@ interface ProjectActionsProps {
 }
 
 export function ProjectActions({ project, className }: ProjectActionsProps) {
+  const hasGithub = isValidLink(project.github);
   const hasDemo = isValidLink(project.demo);
   const hasPaper = isValidLink(project.paper);
   const hasReport = isValidLink(project.report) && !hasPaper;
 
   return (
     <div className={cn("proj-actions", className)}>
-      <a
-        href={getGithubUrl(project)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="proj-action-btn"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Github className="h-4 w-4" aria-hidden="true" />
-        GitHub
-      </a>
+      {hasGithub && (
+        <a
+          href={project.github!}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="proj-action-btn"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Github className="h-4 w-4" aria-hidden="true" />
+          GitHub
+        </a>
+      )}
       {hasDemo && (
         <a
           href={project.demo!}

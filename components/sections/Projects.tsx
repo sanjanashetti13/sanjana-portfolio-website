@@ -1,15 +1,14 @@
 import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import {
   projectFilters,
   projects,
-  projectsSubtitle,
   type Project,
   type ProjectFilter,
 } from "@/data/content";
-import { ProjectGalleryCard } from "@/components/ui/ProjectGalleryCard";
 import { ProjectDetailModal } from "@/components/ui/ProjectDetailModal";
+import { ProjectCircularShowcase } from "@/components/ui/ProjectCircularShowcase";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { cn, motionEase, viewportReveal } from "@/lib/utils";
 
@@ -70,10 +69,13 @@ export function Projects() {
   return (
     <section id="projects" className="projects-section">
       <div className="projects-shell">
-        <motion.header className="projects-header" {...headerMotion}>
-          <p className="projects-eyebrow"></p>
-          <h2 className="projects-title">My Projects</h2>
-          <p className="projects-subtitle">{projectsSubtitle}</p>
+        <motion.header className="projects-header projects-header--scroll" {...headerMotion}>
+          <div className="projects-header-copy">
+            <h2 className="projects-title projects-title--scroll">My Projects</h2>
+            <p className="projects-subtitle projects-subtitle--scroll">
+              Use the arrows to browse projects. Click a card to explore details.
+            </p>
+          </div>
         </motion.header>
 
         <motion.div
@@ -115,39 +117,17 @@ export function Projects() {
         </motion.div>
 
         <div className="projects-showcase">
-          <AnimatePresence mode="wait">
-            {hasResults ? (
-              <motion.div
-                key={`${activeFilter}-${searchQuery}`}
-                className="projects-gallery-grid"
-                initial={reduced ? false : { opacity: 0 }}
-                animate={reduced ? undefined : { opacity: 1 }}
-                exit={reduced ? undefined : { opacity: 0 }}
-                transition={{ duration: 0.35, ease: motionEase }}
-              >
-                <AnimatePresence mode="popLayout">
-                  {filteredProjects.map((project, index) => (
-                    <ProjectGalleryCard
-                      key={project.slug}
-                      project={project}
-                      index={index}
-                      onSelect={setSelectedProject}
-                    />
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-            ) : (
-              <motion.p
-                key="empty"
-                className="projects-empty"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-              >
-                No projects match your search. Try another filter or keyword.
-              </motion.p>
-            )}
-          </AnimatePresence>
+          {hasResults ? (
+            <ProjectCircularShowcase
+              key={`${activeFilter}-${searchQuery}`}
+              projects={filteredProjects}
+              onSelect={setSelectedProject}
+            />
+          ) : (
+            <p className="projects-empty">
+              No projects match your search. Try another filter or keyword.
+            </p>
+          )}
         </div>
       </div>
 

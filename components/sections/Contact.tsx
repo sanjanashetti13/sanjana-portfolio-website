@@ -24,8 +24,23 @@ export function Contact() {
         body: JSON.stringify(form),
       });
 
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+
       if (!res.ok) {
-        const data = await res.json();
+        if (res.status === 503) {
+          const subject = encodeURIComponent(`Portfolio contact from ${form.name}`);
+          const body = encodeURIComponent(
+            `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
+          );
+          window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
+          toast({
+            title: "Opening your email app",
+            description: "Finish sending the message from your mail client.",
+          });
+          setForm({ name: "", email: "", message: "" });
+          return;
+        }
+
         throw new Error(data.error || "Failed to send message");
       }
 

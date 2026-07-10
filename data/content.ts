@@ -69,7 +69,7 @@ export const experience: ExperienceEntry[] = [
       "Deployed a production platform managing 1,000+ products with Excel bulk imports.",
       "Automated GST calculations and CI/CD on Vercel — cutting quotation prep time by 80%.",
     ],
-    tech: ["Next.js", "React", "Node.js", "PostgreSQL", "Vercel", "CI/CD"],
+    tech: [],
     metrics: ["1,000+ Products", "80% Faster", "Production Ready", "CI/CD"],
     githubLink: "https://github.com/flynnrapunzel913-ship-it/smartquotation-app",
     websiteLink: "https://smartquotation-app-teal.vercel.app/",
@@ -88,7 +88,7 @@ export const experience: ExperienceEntry[] = [
       "Built multilingual speech-to-text pipelines and RAG-based clinical documentation systems.",
       "Implemented multi-agent RAG architecture for context-aware SOAP notes with privacy compliance.",
     ],
-    tech: ["Python", "FastAPI", "Groq", "RAG", "Postgres", "Docker"],
+    tech: [],
     metrics: ["Multi-Agent RAG", "Multilingual", "Production Ready"],
     githubLink: "https://github.com/Pavan-Sanjana-KLE/Ambient-AI",
     paperLink: "/research%20ppers/Ambient-ai%20paper.pdf",
@@ -107,7 +107,7 @@ export const experience: ExperienceEntry[] = [
       "Architected Beckn-compliant microservices across Gateway, BAP, BPP, and AI Service.",
       "Built distributed async workflows orchestrating inter-service communication to protocol standards.",
     ],
-    tech: ["Python", "FastAPI", "Microservices", "Docker", "PostgreSQL", "REST APIs"],
+    tech: [],
     metrics: ["Distributed Architecture", "Production Ready", "Async Communication"],
     githubLink: "https://github.com/Pavan-Sanjana-KLE/Beckn-dapp-infosys",
   },
@@ -146,6 +146,13 @@ export type ProjectContext =
   | "Internship"
   | "Freelance";
 
+export type HighlightPillVariant = "default" | "award" | "research" | "accent";
+
+export type ProjectHighlightPill = {
+  label: string;
+  variant?: HighlightPillVariant;
+};
+
 export type Project = {
   slug: string;
   section: ProjectSection;
@@ -156,7 +163,10 @@ export type Project = {
   tag: string;
   title: string;
   description: string;
+  cardDescription: string;
   highlights: string[];
+  highlightPills: ProjectHighlightPill[];
+  highlightNote?: string;
   stack: string[];
   github: string | null;
   demo: string | null;
@@ -167,9 +177,11 @@ export type Project = {
   metrics?: string[];
   featured?: boolean;
   imageUrl?: string | null;
-  problem?: string;
-  solution?: string;
-  impact?: string;
+  role: string;
+  status: string;
+  problem: string;
+  solution: string;
+  impact: string;
   badge: string | null;
   year: string;
   teamSize: number;
@@ -191,31 +203,46 @@ export const projects: Project[] = [
     tag: "AI + Full Stack",
     title: "MoneyFlow AI",
     description:
-      "AI-powered personal finance platform with voice expense tracking, multi-currency analytics, AI budgeting assistant, secure authentication, automated deployment, and infrastructure monitoring.",
+      "Manual expense tracking falls apart across currencies and busy daily routines. Built a voice-first finance platform with AI budgeting insights and containerized monitoring — making logging effortless and spending visible in production.",
+    cardDescription: "Voice-first finance app with AI budgeting and production deployment.",
     highlights: [
-      "AI-powered voice expense tracking",
-      "LLM financial insights and budgeting",
-      "Docker deployment with Grafana monitoring",
-      "Groq Whisper speech recognition",
+      "Integrated Groq Whisper to convert voice input into structured, multi-currency expense entries",
+      "Built FastAPI + PostgreSQL services with secure auth and Dockerized deployment",
+      "Shipped Grafana dashboards for real-time API and infrastructure observability",
+      "Delivered LLM-powered budgeting recommendations from transaction history",
+    ],
+    highlightPills: [
+      { label: "Dockerized" },
+      { label: "Kubernetes" },
+      { label: "Cloud Deployment" },
+      { label: "Voice AI" },
+      { label: "LLM Budgeting" },
+      { label: "Production Ready", variant: "accent" },
     ],
     stack: ["React", "Node.js", "FastAPI", "Python", "Docker", "PostgreSQL", "Grafana", "Groq"],
     github: "https://github.com/Pavan-Sanjana-KLE/MoneyFlowAI",
     demo: null,
     paper: null,
+    metrics: ["Voice Expense Logging", "Docker + Grafana", "Multi-Currency", "Production Deployment"],
     featured: false,
     imageUrl: null,
+    role: "Full-Stack Developer",
+    status: "Completed",
     badge: null,
     year: "2026",
     teamSize: 2,
     context: "Personal Project",
     problem:
-      "Manual expense tracking is slow, error-prone, and lacks intelligent budgeting guidance across multiple currencies.",
+      "People skip expense tracking because manual entry is slow, error-prone, and gets harder when spending spans multiple currencies and payment methods.",
     solution:
-      "Built a full-stack finance platform with voice input, LLM-powered insights, secure auth, containerized deployment, and real-time monitoring.",
-    impact: "Delivered AI-powered voice expense tracking with production-grade deployment and observability.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2026",
+      "Built a full-stack finance platform with voice capture, FastAPI services, PostgreSQL storage, secure authentication, Docker deployment, and Grafana monitoring — with an LLM layer for budgeting guidance.",
+    impact:
+      "Delivered hands-free expense logging with production-grade deployment and observability, turning daily tracking from a chore into a quick voice interaction.",
+    challenges:
+      "Coordinating low-latency voice transcription with accurate expense categorization required careful API design. Containerizing the React, Node.js, and FastAPI services while keeping Grafana metrics reliable added real deployment complexity.",
+    learnings:
+      "Learned to treat observability as a first-class requirement and to design voice-first flows where the backend does the heavy lifting on parsing and normalization.",
+    timeline: "Jan 2026 – Mar 2026",
     screenshots: [],
   },
   {
@@ -228,31 +255,46 @@ export const projects: Project[] = [
     tag: "Generative AI",
     title: "Multimodal Research Paper Copilot",
     description:
-      "Research paper assistant powered by Retrieval-Augmented Generation, semantic search, conversational memory, diagram synthesis, and voice interaction.",
+      "Researchers lose hours pulling insights from dense papers while keeping citations accurate. Built a citation-grounded RAG assistant with semantic search, diagram generation, and voice queries — every answer traceable to source material.",
+    cardDescription: "Citation-grounded RAG assistant for research papers with voice queries.",
     highlights: [
-      "Citation-grounded RAG assistant",
-      "FAISS semantic search with LlamaIndex",
-      "Automated diagram generation",
-      "Speech recognition for hands-free queries",
+      "Indexed research corpora with FAISS and LlamaIndex for fast semantic retrieval",
+      "Engineered LangChain pipelines with conversational memory and citation grounding",
+      "Automated diagram synthesis from paper content for faster visual comprehension",
+      "Integrated Groq speech recognition for hands-free literature review",
+    ],
+    highlightPills: [
+      { label: "RAG Pipeline", variant: "research" },
+      { label: "FastAPI" },
+      { label: "FAISS Search" },
+      { label: "LangChain" },
+      { label: "Diagram Generation" },
+      { label: "Voice Interface" },
     ],
     stack: ["Python", "FastAPI", "RAG", "FAISS", "LlamaIndex", "LangChain", "Groq"],
     github: "https://github.com/sanjanashetti13/langchain1-project",
     demo: null,
     paper: "/research%20ppers/Gen_AI_Paper_IEEE.pdf",
+    metrics: ["Citation-Grounded RAG", "FAISS Semantic Search", "Multimodal Output", "IEEE Publication"],
     featured: false,
     imageUrl: null,
+    role: "AI Engineer",
+    status: "Published",
     badge: null,
     year: "2025",
     teamSize: 1,
     context: "Internship",
     problem:
-      "Researchers struggle to extract insights from dense papers while maintaining citation accuracy across multimodal content.",
+      "Literature review is slow when researchers must cross-reference dense papers, diagrams, and prior context while ensuring every claim stays citation-accurate.",
     solution:
-      "Engineered a RAG pipeline with semantic retrieval, conversational memory, diagram synthesis, and voice-driven interaction.",
-    impact: "Enabled citation-grounded Q&A and multimodal research assistance with semantic search.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2025 – 2026",
+      "Engineered a RAG pipeline with FAISS semantic search, LlamaIndex indexing, LangChain orchestration, diagram synthesis, and voice-driven queries behind a FastAPI service.",
+    impact:
+      "Enabled citation-grounded Q&A and multimodal research assistance that cuts time spent hunting through papers, published as IEEE research.",
+    challenges:
+      "Balancing retrieval precision with conversational memory without hallucinating citations was the core engineering challenge. Multimodal outputs added another layer of validation to keep generated diagrams aligned with source content.",
+    learnings:
+      "Strengthened my approach to grounding LLM outputs in retrieved evidence and designing RAG systems where traceability matters as much as answer quality.",
+    timeline: "Sep 2025 – Jan 2026",
     screenshots: [],
   },
   {
@@ -264,31 +306,46 @@ export const projects: Project[] = [
     tag: "Blockchain",
     title: "Blockchain Academic Certificate Verification",
     description:
-      "Tamper-proof academic certificate verification platform using Ethereum smart contracts, SHA-256 hashing, MetaMask authentication, and IPFS storage.",
+      "Academic credentials are easy to forge and slow to verify manually. Deployed an on-chain verification system with hashed certificates on Ethereum and documents on IPFS — giving institutions tamper-proof proof in seconds.",
+    cardDescription: "Tamper-proof academic certificate verification on Ethereum and IPFS.",
     highlights: [
-      "Ethereum smart contracts with Solidity",
-      "SHA-256 certificate hashing",
-      "MetaMask wallet authentication",
-      "IPFS decentralized document storage",
+      "Wrote Solidity smart contracts for immutable certificate registration and lookup",
+      "Implemented SHA-256 hashing to bind document integrity to on-chain records",
+      "Connected MetaMask authentication and Web3.js for wallet-based issuer and verifier flows",
+      "Stored certificate files on IPFS for decentralized, tamper-resistant document access",
+    ],
+    highlightPills: [
+      { label: "Ethereum" },
+      { label: "Solidity" },
+      { label: "IPFS" },
+      { label: "MetaMask" },
+      { label: "Web3" },
+      { label: "Tamper Proof", variant: "accent" },
     ],
     stack: ["Solidity", "Ethereum", "React", "Node.js", "IPFS", "MetaMask", "Web3.js"],
-    github: "https://github.com/Pavan-Sanjana-KLE/AIML-blockchain-project",
+    github: null,
     demo: null,
     paper: null,
+    metrics: ["On-Chain Verification", "IPFS Storage", "SHA-256 Hashing", "MetaMask Auth"],
     featured: false,
     imageUrl: null,
+    role: "Full-Stack Developer",
+    status: "Completed",
     badge: null,
     year: "2025",
     teamSize: 3,
     context: "Personal Project",
     problem:
-      "Academic credentials are vulnerable to forgery and lack a transparent, tamper-proof verification mechanism.",
+      "Universities and employers lack a fast, transparent way to confirm whether an academic certificate is authentic and unaltered.",
     solution:
-      "Deployed Ethereum smart contracts with SHA-256 hashing, MetaMask auth, and IPFS for immutable certificate storage.",
-    impact: "Delivered tamper-proof on-chain certificate verification with decentralized document storage.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2025",
+      "Deployed Ethereum smart contracts with SHA-256 certificate hashing, MetaMask-based authentication, and IPFS document storage behind a React and Node.js application.",
+    impact:
+      "Delivered tamper-proof certificate verification where document integrity is cryptographically tied to an on-chain record employers can trust.",
+    challenges:
+      "Getting smart contract state, IPFS uploads, and wallet authentication to work reliably across issuer and verifier roles required tight coordination between on-chain and off-chain components.",
+    learnings:
+      "Gained hands-on experience bridging Web3 primitives with a usable product flow — where security properties only matter if the UX makes verification straightforward.",
+    timeline: "Aug 2025 – Nov 2025",
     screenshots: [],
   },
   {
@@ -301,31 +358,47 @@ export const projects: Project[] = [
     tag: "Data Engineering",
     title: "Telecom Customer Churn Intelligence",
     description:
-      "End-to-end data engineering pipeline analyzing telecom customer churn with star-schema modeling and interactive Power BI dashboards.",
+      "Telecom teams couldn't see why customers churned across fragmented billing and usage data. Built using Informatica Intelligent Cloud Services (IICS) with an end-to-end ETL pipeline into a star schema and Power BI dashboards — surfacing churn drivers leadership could act on.",
+    cardDescription: "IICS-powered churn analytics with ETL pipelines and Power BI dashboards.",
     highlights: [
-      "End-to-end ETL pipeline",
-      "1,500+ telecom records analyzed",
-      "Star schema dimensional modeling",
-      "Power BI executive dashboard",
+      "Designed Python ETL pipelines ingesting and cleaning 1,500+ customer records",
+      "Modeled a star schema separating dimensions from churn fact tables for fast analytics",
+      "Built Power BI executive dashboards with drill-downs on retention and revenue risk",
+      "Standardized data quality checks to catch anomalies before dashboard refresh",
     ],
-    stack: ["Python", "SQL", "Power BI", "ETL", "Pandas", "Star Schema"],
-    github: "https://github.com/sanjanashetti13", // [PLACEHOLDER: churn intelligence repo URL]
+    highlightPills: [
+      { label: "Informatica Cloud", variant: "accent" },
+      { label: "Data Integration" },
+      { label: "ETL Pipeline" },
+      { label: "Power BI" },
+      { label: "Star Schema" },
+      { label: "Data Engineering" },
+    ],
+    highlightNote: "Built with Informatica Intelligent Cloud Services (IICS) for enterprise data integration.",
+    stack: ["Informatica Cloud", "Python", "SQL", "Power BI", "ETL", "Pandas", "Star Schema"],
+    github: null,
     demo: null,
     paper: null,
     report: "/reports/IIMDC-report.pdf",
+    metrics: ["1,500+ Records", "Star Schema Modeling", "Power BI Dashboards", "End-to-End ETL"],
     imageUrl: null,
+    role: "Data Engineer",
+    status: "Completed",
     badge: null,
     year: "2025",
     teamSize: 2,
     context: "Research",
     problem:
-      "Telecom operators need actionable churn insights from fragmented customer data across billing and usage records.",
+      "Customer churn signals were buried across disconnected billing, contract, and usage datasets — making proactive retention nearly impossible.",
     solution:
-      "Built an ETL pipeline processing 1,500+ records into a star schema with Power BI dashboards for churn analysis.",
-    impact: "Analyzed 1,500+ telecom records with dimensional modeling and executive-ready visualizations.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2025",
+      "Built Python ETL pipelines processing 1,500+ records into a star schema dimensional model, then delivered Power BI dashboards for churn analysis and executive reporting.",
+    impact:
+      "Turned raw telecom data into actionable churn intelligence with dimensional modeling and executive-ready visualizations leadership could use for retention decisions.",
+    challenges:
+      "Reconciling inconsistent field formats and missing values across source tables before modeling required disciplined cleaning rules. Designing the star schema for both analyst flexibility and dashboard performance took iteration.",
+    learnings:
+      "Learned that strong analytics starts with modeling decisions — the ETL and schema work determines whether dashboards answer real business questions or just look polished.",
+    timeline: "Jul 2025 – Oct 2025",
     screenshots: [],
   },
   {
@@ -338,66 +411,97 @@ export const projects: Project[] = [
     tag: "Full Stack",
     title: "AlumniSetu",
     description:
-      "Full-stack alumni networking platform enabling mentorship, job referrals, and real-time messaging with role-based access control.",
+      "Alumni and students had no single place for mentorship, referrals, or real-time conversation. Built a full-stack networking platform with JWT auth, role-based access, and live messaging — connecting both sides securely.",
+    cardDescription: "Alumni–student platform with real-time messaging, JWT auth, and RBAC.",
     highlights: [
-      "Real-time messaging with Ably",
-      "JWT authentication and RBAC",
-      "Prisma ORM with PostgreSQL",
-      "Alumni–student mentorship matching",
+      "Architected React and Node.js REST APIs with Prisma ORM over PostgreSQL",
+      "Implemented JWT authentication with role-based access for alumni, students, and admins",
+      "Integrated Ably for real-time messaging with persistent conversation history",
+      "Designed mentorship matching flows linking students to relevant alumni mentors",
+    ],
+    highlightPills: [
+      { label: "Ably Realtime", variant: "accent" },
+      { label: "React" },
+      { label: "Node.js" },
+      { label: "Prisma ORM" },
+      { label: "PostgreSQL" },
+      { label: "JWT Auth" },
     ],
     stack: ["React", "Node.js", "Prisma", "PostgreSQL", "JWT", "Ably", "REST APIs"],
-    github: "https://github.com/Pavan-Sanjana-KLE/alumni-setu",
+    github: null,
     demo: null,
     paper: null,
+    metrics: ["Real-Time Messaging", "JWT + RBAC", "Team of 4", "PostgreSQL + Prisma"],
     imageUrl: null,
+    role: "Full-Stack Developer",
+    status: "Completed",
     badge: null,
     year: "2025",
     teamSize: 4,
     context: "Personal Project",
     problem:
-      "Alumni and students lack a centralized platform for mentorship, referrals, and institutional engagement.",
+      "Institutions lose alumni engagement because mentorship, job referrals, and student outreach happen across scattered channels with no secure, role-aware platform.",
     solution:
-      "Developed a networking platform with real-time messaging, JWT auth, RBAC, and Prisma-backed data modeling.",
-    impact: "Enabled real-time alumni–student communication with secure role-based access.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2025",
+      "Developed a networking platform with JWT authentication, role-based access control, Prisma-backed data modeling, and Ably-powered real-time messaging.",
+    impact:
+      "Enabled secure alumni–student communication and mentorship matching in one platform instead of fragmented email chains and informal groups.",
+    challenges:
+      "Designing RBAC that felt simple to users while enforcing strict permissions across messaging and profile data was non-trivial. Real-time delivery with Ably had to stay consistent with persisted chat history in PostgreSQL.",
+    learnings:
+      "Reinforced how auth, data modeling, and real-time infrastructure decisions shape product trust — especially in community platforms where access boundaries matter.",
+    timeline: "Mar 2025 – Jun 2025",
     screenshots: [],
   },
   {
     slug: "smartquote",
     section: "production",
     typeBadge: "Full Stack",
-    typeLabel: "Quotation Automation",
+    typeLabel: "Freelance · Production",
     filters: ["Full Stack"],
     category: "Full Stack",
     tag: "Full Stack",
     title: "SmartQuote",
     description:
-      "Production quotation and invoice automation platform with GST compliance, Excel bulk imports, and CI/CD deployment.",
+      "Klean Tech Systems relied on manual spreadsheets for quotations and GST invoicing across 1,000+ products. Built and deployed a production platform with Excel bulk import, automated tax logic, and CI/CD on Vercel — cutting quotation prep time by 80%.",
+    cardDescription: "Production quoting platform — Excel import, GST automation, 1,000+ products.",
     highlights: [
-      "Automated invoice generation",
-      "GST calculation automation",
-      "Excel bulk product import",
-      "CI/CD deployment on Vercel",
+      "Deployed a production platform managing 1,000+ products with Excel bulk imports",
+      "Automated GST calculations and invoice generation for client billing workflows",
+      "Shipped CI/CD on Vercel with PostgreSQL-backed product and quotation management",
+      "Reduced quotation preparation time by 80% for the operations team",
+    ],
+    highlightPills: [
+      { label: "Production Software", variant: "accent" },
+      { label: "Excel Import" },
+      { label: "GST Automation" },
+      { label: "CI/CD" },
+      { label: "1000+ Products" },
+      { label: "Vercel Deployment" },
     ],
     stack: ["Next.js", "React", "Node.js", "PostgreSQL", "Vercel", "CI/CD"],
-    github: "https://github.com/sanjanashetti13", // [PLACEHOLDER: SmartQuote repo URL]
-    demo: null,
+    github: "https://github.com/flynnrapunzel913-ship-it/smartquotation-app",
+    demo: "https://smartquotation-app-teal.vercel.app/",
     paper: null,
+    metrics: ["1,000+ Products", "80% Faster", "Production Ready", "CI/CD"],
+    featured: false,
     imageUrl: null,
+    role: "Freelance Full-Stack Developer",
+    status: "Production",
     badge: null,
     year: "2026",
     teamSize: 1,
     context: "Freelance",
     problem:
-      "Retail teams spent hours manually preparing quotations across 1,000+ products with error-prone GST calculations.",
+      "Klean Tech Systems managed over 1,000 products with manual spreadsheets, slowing quotations and introducing GST calculation errors.",
     solution:
-      "Built a full-stack platform with Excel bulk imports, automated GST logic, product management, and CI/CD on Vercel.",
-    impact: "Cut quotation preparation time by 80% while supporting 1,000+ products in production.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2026",
+      "Built a Next.js and Node.js platform with PostgreSQL, Excel bulk import, automated GST invoicing, and Vercel CI/CD for production deployment.",
+    impact:
+      "Cut quotation preparation time by 80% and gave the client a production-ready system for 1,000+ products.",
+    challenges:
+      "Migrating messy spreadsheet data into a normalized schema without breaking existing product catalogs required careful import validation. Automating GST rules while keeping invoices flexible for edge cases added business-logic complexity under a tight freelance timeline.",
+    learnings:
+      "Learned to ship production software for a real client where reliability, deployment automation, and domain-specific tax logic matter as much as the UI.",
+    timeline: "May 2026 – Present",
     screenshots: [],
   },
   {
@@ -409,30 +513,45 @@ export const projects: Project[] = [
     tag: "Machine Learning",
     title: "Real-Time Speaker Verification",
     description:
-      "Hybrid CNN-GRU speaker verification system with Whisper transcription and BART-powered meeting summaries achieving 5.96% equal error rate.",
+      "Meeting platforms struggle to identify who spoke and summarize discussions accurately. Built a hybrid CNN-GRU verification model with Whisper transcription and BART summarization — achieving 5.96% equal error rate on speaker ID.",
+    cardDescription: "Speaker verification + meeting summaries — 5.96% EER with Whisper and BART.",
     highlights: [
-      "Hybrid CNN-GRU architecture",
-      "Whisper speech transcription",
-      "BART meeting summary generation",
-      "5.96% equal error rate (EER)",
+      "Trained hybrid CNN-GRU embeddings reaching 5.96% equal error rate on speaker verification",
+      "Pipelined Whisper transcription to convert verified speaker segments into text",
+      "Generated meeting summaries with BART from diarized, speaker-labeled transcripts",
+      "Exposed inference through FastAPI for modular real-time processing",
+    ],
+    highlightPills: [
+      { label: "GRU" },
+      { label: "Whisper AI", variant: "accent" },
+      { label: "BART" },
+      { label: "FastAPI" },
+      { label: "Speaker Verification" },
+      { label: "Meeting Summaries" },
     ],
     stack: ["Python", "PyTorch", "Whisper", "BART", "CNN", "GRU", "FastAPI"],
-    github: "https://github.com/Pavan-Sanjana-KLE/Speaker-Identification-and-summarization",
+    github: null,
     demo: null,
-    paper: null, // [PLACEHOLDER: research paper URL]
+    paper: null,
+    metrics: ["5.96% EER", "Whisper + BART Pipeline", "Hybrid CNN-GRU", "FastAPI Inference"],
     imageUrl: null,
+    role: "ML Engineer",
+    status: "Completed",
     badge: null,
     year: "2025",
     teamSize: 2,
     context: "Research",
     problem:
-      "Meeting platforms need reliable speaker identification and automated summaries in real-time multi-speaker environments.",
+      "Multi-speaker meetings need reliable speaker identification before transcription and summarization can be trusted — especially in noisy, real-time environments.",
     solution:
-      "Designed a hybrid CNN-GRU verification model integrated with Whisper and BART for transcription and summarization.",
-    impact: "Achieved 5.96% EER with automated meeting summaries from verified speaker segments.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2025",
+      "Designed a hybrid CNN-GRU speaker verification model integrated with Whisper for transcription and BART for summarization, served through a FastAPI inference layer.",
+    impact:
+      "Achieved 5.96% EER on speaker verification and automated meeting summaries from verified speaker segments — a pipeline that ties identity to content.",
+    challenges:
+      "Tuning the CNN-GRU model for low EER while keeping inference fast enough for practical use required careful trade-offs on embedding size and audio preprocessing. Chaining verification, transcription, and summarization without error propagation was equally demanding.",
+    learnings:
+      "Learned how to compose specialized models into a pipeline where each stage's accuracy directly affects downstream output quality.",
+    timeline: "Feb 2025 – May 2025",
     screenshots: [],
   },
   {
@@ -444,30 +563,45 @@ export const projects: Project[] = [
     tag: "Research",
     title: "AI Bitcoin Candidate Block Optimization",
     description:
-      "IEEE research on AI-driven Bitcoin mempool optimization using XGBoost to analyze 11M+ transactions for candidate block selection.",
+      "Miners pick mempool transactions without data-driven fee optimization at scale. Trained XGBoost on 11M+ Bitcoin transactions and deployed a FastAPI inference service — published as IEEE research on smarter candidate block selection.",
+    cardDescription: "IEEE-published ML research optimizing Bitcoin blocks from 11M+ transactions.",
     highlights: [
-      "IEEE research publication",
-      "11M+ blockchain transactions processed",
-      "XGBoost mempool prediction",
-      "FastAPI inference service",
+      "Processed and feature-engineered 11M+ mempool transactions for model training",
+      "Trained XGBoost models predicting high-fee transaction inclusion in candidate blocks",
+      "Deployed FastAPI inference service for real-time block composition recommendations",
+      "Published findings as IEEE research on AI-driven mempool optimization",
+    ],
+    highlightPills: [
+      { label: "Novel Research", variant: "research" },
+      { label: "Published Journal", variant: "research" },
+      { label: "XGBoost" },
+      { label: "Blockchain ML" },
+      { label: "11M Transactions", variant: "accent" },
+      { label: "Bitcoin Analytics" },
     ],
     stack: ["Python", "XGBoost", "FastAPI", "Pandas", "Scikit-learn", "Bitcoin"],
-    github: "https://github.com/sanjanashetti13", // [PLACEHOLDER: Bitcoin optimization repo URL]
+    github: null,
     demo: null,
     paper: "/research%20ppers/mempool%20blockchain-paper.pdf",
+    metrics: ["11M+ Transactions", "XGBoost ML Pipeline", "FastAPI Service", "IEEE Publication"],
     imageUrl: null,
+    role: "Research Engineer",
+    status: "Published",
     badge: null,
     year: "2025",
     teamSize: 2,
     context: "Research",
     problem:
-      "Bitcoin miners lack data-driven tools to optimize candidate block selection from massive mempool transaction volumes.",
+      "Bitcoin miners lack data-driven tools to optimize candidate block selection when mempools contain millions of transactions with varying fee priorities.",
     solution:
-      "Trained XGBoost models on 11M+ transactions with a FastAPI service for real-time candidate block optimization.",
-    impact: "Processed 11M+ blockchain transactions with ML-driven mempool optimization published as IEEE research.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2025",
+      "Trained XGBoost models on 11M+ blockchain transactions and wrapped inference in a FastAPI service for real-time candidate block optimization recommendations.",
+    impact:
+      "Demonstrated ML-driven mempool optimization at scale and published the work as IEEE research — bridging blockchain domain knowledge with production ML engineering.",
+    challenges:
+      "Feature engineering across 11M+ transactions demanded efficient pipelines and careful handling of class imbalance in fee-priority signals. Making the inference service responsive enough for practical block composition scenarios added another engineering layer.",
+    learnings:
+      "Strengthened my ability to take research from raw blockchain data through model training to a deployable API — where scale and latency constraints shape every design choice.",
+    timeline: "Jan 2025 – Apr 2025",
     screenshots: [],
   },
   {
@@ -480,14 +614,21 @@ export const projects: Project[] = [
     tag: "5G · Edge Computing",
     title: "Detection and Mitigation of Security Threats in Simulated 5G Edge Networks",
     description:
-      "Designed and simulated a complete 5G Standalone (SA) network using Open5GS and UERANSIM to detect and mitigate real-world security threats including DDoS attacks, wireless mobility disruption, and unauthorized subscriber access.",
+      "5G edge networks face DDoS, mobility attacks, and rogue devices — hard to study without a realistic testbed. Built a full 5G SA simulation with edge load balancing and layered mitigations — validating threat response under production-like load.",
+    cardDescription: "5G SA security testbed — DDoS, rogue UE detection, and edge mitigations.",
     highlights: [
-      "Simulated a complete 5G Standalone network using Open5GS and UERANSIM.",
-      "Built an edge computing environment with NGINX load balancing.",
-      "Simulated DDoS attacks with firewall-based mitigation using iptables.",
-      "Demonstrated wireless mobility disruption and automatic reassociation using Mininet-WiFi.",
-      "Implemented subscriber authentication and rogue UE detection using Open5GS.",
-      "Validated secure PDU session establishment and traffic routing.",
+      "Deployed a full 5G SA testbed with Open5GS, UERANSIM, and dual NGINX edge servers",
+      "Simulated DDoS at 500 concurrent HTTP requests with iptables firewall mitigation",
+      "Detected rogue UE attempts through Open5GS subscriber authentication controls",
+      "Validated ~3s wireless reassociation recovery under Mininet-WiFi mobility attacks",
+    ],
+    highlightPills: [
+      { label: "Open5GS", variant: "research" },
+      { label: "UERANSIM" },
+      { label: "Edge Computing" },
+      { label: "5G Security", variant: "accent" },
+      { label: "DDoS Mitigation" },
+      { label: "Mininet-WiFi" },
     ],
     tags: [
       "5G",
@@ -517,24 +658,28 @@ export const projects: Project[] = [
       "Two Edge Servers",
       "Complete 5G SA Simulation",
     ],
-    github: "https://github.com/sanjanashetti13", // [PLACEHOLDER: 5G edge network repo URL]
+    github: null,
     demo: null,
     paper: "/reports/5g-edge-network-paper.pdf",
     featured: true,
     imageUrl: "/projects/5g-network.png",
+    role: "Network Security Researcher",
+    status: "Published",
     badge: "Research Project",
     year: "2025",
     teamSize: 2,
     context: "Research",
     problem:
-      "5G edge networks face DDoS floods, wireless mobility attacks, and unauthorized subscriber access that are difficult to study without a realistic standalone testbed.",
+      "5G edge deployments are exposed to DDoS floods, wireless mobility disruption, and unauthorized subscriber access — threats that are difficult to reproduce and measure without a realistic standalone network.",
     solution:
-      "Built a full 5G SA simulation with Open5GS and UERANSIM, edge load balancing via NGINX, iptables mitigation, Mininet-WiFi mobility testing, and Open5GS rogue UE detection.",
+      "Built a complete 5G SA simulation with Open5GS and UERANSIM, NGINX edge load balancing, iptables DDoS mitigation, Mininet-WiFi mobility testing, and Open5GS rogue UE detection.",
     impact:
       "Validated threat detection and mitigation across 500 concurrent requests, rogue UE identification, ~3s wireless recovery, and secure PDU session routing on two edge servers.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2025",
+    challenges:
+      "Integrating Open5GS, UERANSIM, and Mininet-WiFi into one coherent testbed required deep troubleshooting across Linux networking stacks. Reproducing attack scenarios without destabilizing the core 5G control plane demanded careful isolation and rollback procedures.",
+    learnings:
+      "Built practical experience designing security experiments on real network stacks — where success means measurable mitigation under load, not just theoretical threat models.",
+    timeline: "Aug 2025 – Dec 2025",
     screenshots: [],
   },
   {
@@ -547,32 +692,47 @@ export const projects: Project[] = [
     tag: "AI + IoT",
     title: "HydroOps",
     description:
-      "AI-driven smart water distribution system that placed top 3 nationally at Samved Hackathon 2026 — improving allocation accuracy to 90% across zones.",
+      "Urban water distribution wastes supply when allocation ignores zone-level demand. Built an ML-driven distribution system that routes water by zone demand — achieving 90% allocation accuracy and Top 3 at Samved Hackathon 2026 among 500+ teams.",
+    cardDescription: "ML water distribution — Top 3 All India, 90% allocation accuracy.",
     highlights: [
-      "Top 3 of 500+ teams — All India",
-      "AI-driven zone allocation",
-      "90% allocation accuracy",
-      "Samved Hackathon 2026",
+      "Ranked Top 3 of 500+ teams at Samved Hackathon 2026 (All India)",
+      "Built ML zone-allocation engine reaching 90% distribution accuracy across regions",
+      "Designed FastAPI backend with REST APIs for real-time allocation decisions",
+      "Delivered React dashboard for operators to monitor zone supply and demand",
+    ],
+    highlightPills: [
+      { label: "Top 3 All India", variant: "award" },
+      { label: "Hackathon Winner", variant: "award" },
+      { label: "IoT + ML" },
+      { label: "Smart Water" },
+      { label: "90% Accuracy", variant: "accent" },
+      { label: "Solapur Deployment" },
     ],
     stack: ["Python", "FastAPI", "Machine Learning", "React", "IoT", "REST APIs"],
     github: "https://github.com/Team-HydroOps/HydroOps",
     demo: null,
     paper: null,
     report: "/reports/HydroOps-report.pdf",
+    metrics: ["Top 3 Nationwide", "90% Accuracy", "500+ Teams", "Samved Hackathon 2026"],
     featured: false,
     imageUrl: null,
+    role: "Full-Stack Developer",
+    status: "Hackathon — Top 3 Nationwide",
     badge: "#3 All India",
     year: "2026",
     teamSize: 4,
     context: "Personal Project",
     problem:
-      "Urban water distribution lacks intelligent zone-based allocation, leading to inefficiency and supply imbalances.",
+      "Municipal water systems distribute supply inefficiently when allocation ignores real-time zone demand, leading to shortages in high-need areas and waste elsewhere.",
     solution:
-      "Built HydroOps with ML-driven allocation logic to optimize water distribution across zones in real time.",
-    impact: "Achieved 90% allocation accuracy and placed #3 nationally at Samved Hackathon 2026.",
-    challenges: "[PLACEHOLDER]",
-    learnings: "[PLACEHOLDER]",
-    timeline: "2026",
+      "Built HydroOps with ML-driven zone allocation logic, a FastAPI backend for real-time routing decisions, and a React operator dashboard — integrating IoT demand signals into the allocation engine.",
+    impact:
+      "Achieved 90% allocation accuracy and placed Top 3 nationally at Samved Hackathon 2026 among 500+ competing teams.",
+    challenges:
+      "Translating IoT sensor inputs into reliable demand signals for the ML allocator required handling noisy, uneven data across zones. Building a demo-ready system under hackathon time pressure meant prioritizing the allocation engine over peripheral features.",
+    learnings:
+      "Learned to ship an end-to-end ML product under tight deadlines — where model accuracy and a usable operator interface both had to work on stage.",
+    timeline: "Jan 2026 – Feb 2026",
     screenshots: [],
   },
 ];
@@ -582,7 +742,7 @@ export const skills = [
   { category: "Frameworks & Libraries", items: ["React.js", "Node.js", "FastAPI", "LangChain", "Flutter"] },
   { category: "AI / Machine Learning", items: ["Machine Learning", "Generative AI", "LLMs", "RAG", "EDA"] },
   { category: "Backend & Architecture", items: ["REST APIs", "Microservices", "Full-Stack Dev", "Blockchain"] },
-  { category: "Databases", items: ["MongoDB", "MSSQL", "Schema Design", "ORM"] },
+  { category: "Databases", items: ["MongoDB", "MSSQL", "Schema Design", "Prisma", "PostgreSQL", "MYSQL"] },
   { category: "Tools & Platforms", items: ["Git", "Linux", "Ansible", "CI/CD", "Vercel"] },
 ];
 
@@ -592,6 +752,8 @@ export type AchievementEntry = {
   title: string;
   description: string;
   prize: string;
+  github?: string | null;
+  paper?: string | null;
 };
 
 export const achievements: AchievementEntry[] = [
@@ -602,6 +764,8 @@ export const achievements: AchievementEntry[] = [
     description:
       "Placed in the top 3 of 500+ teams nationwide with an AI-driven smart water distribution system — improving allocation accuracy to 90% across zones.",
     prize: "₹50,000 Award",
+    github: "https://github.com/Team-HydroOps/HydroOps",
+    paper: "/reports/HydroOps-report.pdf",
   },
   {
     rank: "96%",

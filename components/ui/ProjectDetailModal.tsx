@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import type { Project } from "@/data/content";
 import { getProjectLabel, getProjectTheme } from "@/lib/projectTheme";
 import { ProjectActions } from "@/components/ui/ProjectActions";
+import { ProjectHighlightPills } from "@/components/ui/ProjectHighlightPills";
 import { Chip } from "@/components/ui/Chip";
 import {
   Dialog,
@@ -51,17 +52,17 @@ export function ProjectDetailModal({ project, open, onOpenChange }: ProjectDetai
             <img src={project.imageUrl} alt="" loading="lazy" />
           </div>
         )}
-        <div className="proj-detail-modal__hero">
-          <span
-            className="proj-detail-modal__icon"
-            style={
-              {
-                "--proj-accent": theme.color,
-                "--proj-glow": theme.glow,
-              } as CSSProperties
-            }
-          >
-            <Icon aria-hidden="true" strokeWidth={1.75} />
+        <div
+          className="proj-detail-modal__hero"
+          style={
+            {
+              "--proj-accent": theme.color,
+              "--proj-glow": theme.glow,
+            } as CSSProperties
+          }
+        >
+          <span className="proj-detail-modal__icon" aria-hidden="true">
+            <Icon strokeWidth={1.75} />
           </span>
           <DialogHeader className="proj-detail-modal__header">
             <p className="proj-detail-modal__eyebrow">{label}</p>
@@ -73,6 +74,13 @@ export function ProjectDetailModal({ project, open, onOpenChange }: ProjectDetai
             <DialogDescription className="proj-detail-modal__desc">
               {project.description}
             </DialogDescription>
+            <ProjectHighlightPills
+              pills={project.highlightPills}
+              className="proj-detail-modal__pills"
+            />
+            {project.highlightNote && (
+              <p className="proj-detail-modal__note">{project.highlightNote}</p>
+            )}
           </DialogHeader>
         </div>
 

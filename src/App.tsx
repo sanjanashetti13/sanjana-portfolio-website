@@ -4,6 +4,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { HeroNavNameProvider } from "@/components/layout/HeroNavNameContext";
+import { SplashProvider, useSplash } from "@/components/layout/SplashContext";
 import { Nav } from "@/components/layout/Nav";
 import { SocialRail } from "@/components/layout/SocialRail";
 import { Footer } from "@/components/layout/Footer";
@@ -33,35 +34,59 @@ function ScrollToHash() {
   return null;
 }
 
+function AppChrome() {
+  const { splashActive } = useSplash();
+
+  if (splashActive) return null;
+
+  return (
+    <>
+      <Nav />
+      <SocialRail />
+    </>
+  );
+}
+
+function AppContent() {
+  const { splashActive } = useSplash();
+
+  return (
+    <>
+      <SEO
+        title="Sanjana Shetti — Software Engineer, Full-Stack & AI"
+        description={profile.tagline}
+      />
+
+      <LoadingScreen />
+      <AppChrome />
+      <main className="relative">
+        <ScrollToHash />
+        <PageTransition>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/projects/:slug" element={<ProjectPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </PageTransition>
+      </main>
+      {!splashActive && <Footer />}
+      <Toaster />
+      <Analytics />
+      <SpeedInsights />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
       <HeroNavNameProvider>
-        <SEO
-          title="Sanjana Shetti — Software Engineer, Full-Stack & AI"
-          description={profile.tagline}
-        />
-
-        <LoadingScreen />
-        <Nav />
-        <SocialRail />
-        <main className="relative">
-          <ScrollToHash />
-          <PageTransition>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/projects/:slug" element={<ProjectPage />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog/:slug" element={<BlogPostPage />} />
-              <Route path="/404" element={<NotFoundPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </PageTransition>
-        </main>
-        <Footer />
-        <Toaster />
-        <Analytics />
-        <SpeedInsights />
+        <SplashProvider>
+          <AppContent />
+        </SplashProvider>
       </HeroNavNameProvider>
     </ThemeProvider>
   );

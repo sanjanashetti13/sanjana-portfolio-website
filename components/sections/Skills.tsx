@@ -11,9 +11,10 @@ export function Skills() {
       <div className="skills-scroll-track">
         <div className="skills-sticky scroll-section-sticky">
           <div className="skills-layout">
-            <header className="skills-header">
-              <p className="skills-eyebrow"></p>
-              <h2 className="skills-title">Skills</h2>
+            <header className="skills-header skills-header--scroll">
+              <div className="skills-header-copy">
+                <h2 className="skills-title skills-title--scroll">My Skills</h2>
+              </div>
             </header>
 
             <div className="skills-orbital">

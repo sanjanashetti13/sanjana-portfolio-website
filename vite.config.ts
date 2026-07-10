@@ -1,12 +1,35 @@
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import type { IncomingMessage, ServerResponse } from "http";
 
-function devApiPlugin(): Plugin {
+async function readRequestBody(req: IncomingMessage): Promise<string | undefined> {
+  if (req.method === "GET" || req.method === "HEAD") return undefined;
+
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  return chunks.length > 0 ? Buffer.concat(chunks).toString("utf8") : undefined;
+}
+
+async function writeResponse(res: ServerResponse, response: Response) {
+  res.statusCode = response.status;
+  response.headers.forEach((value, key) => {
+    if (key.toLowerCase() === "transfer-encoding") return;
+    res.setHeader(key, value);
+  });
+  res.end(Buffer.from(await response.arrayBuffer()));
+}
+
+function devApiPlugin(env: Record<string, string>): Plugin {
   return {
     name: "dev-api",
     configureServer(server) {
+      Object.assign(process.env, env);
+
       server.middlewares.use(async (req, res, next) => {
         const url = req.url ?? "";
         if (!url.startsWith("/api/")) return next();
@@ -21,15 +44,22 @@ function devApiPlugin(): Plugin {
           } else if (url.startsWith("/api/github")) {
             const { handleGitHubGet } = await import("./api/lib/github");
             response = await handleGitHubGet(requestUrl.searchParams.get("url"));
+          } else if (url.startsWith("/api/contact")) {
+            const body = await readRequestBody(req);
+            const request = new Request(requestUrl.toString(), {
+              method: req.method ?? "POST",
+              headers: {
+                "content-type": req.headers["content-type"] ?? "application/json",
+              },
+              body,
+            });
+            const { default: handler } = await import("./api/contact");
+            response = await handler(request);
           } else {
             return next();
           }
 
-          res.statusCode = response.status;
-          response.headers.forEach((value, key) => {
-            res.setHeader(key, value);
-          });
-          res.end(Buffer.from(await response.arrayBuffer()));
+          await writeResponse(res, response);
         } catch {
           next();
         }
@@ -38,21 +68,25 @@ function devApiPlugin(): Plugin {
   };
 }
 
-export default defineConfig({
-  plugins: [react(), tailwindcss(), devApiPlugin()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "."),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    plugins: [react(), tailwindcss(), devApiPlugin(env)],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "."),
+      },
     },
-  },
-  optimizeDeps: {
-    include: ["three", "@react-three/fiber", "@react-three/drei"],
-  },
-  server: {
-    port: 3000,
-    strictPort: false,
-  },
-  build: {
-    outDir: "dist",
-  },
+    optimizeDeps: {
+      include: ["three", "@react-three/fiber", "@react-three/drei"],
+    },
+    server: {
+      port: 3000,
+      strictPort: false,
+    },
+    build: {
+      outDir: "dist",
+    },
+  };
 });

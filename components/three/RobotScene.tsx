@@ -69,7 +69,7 @@ export function RobotScene({ confused = false, className }: RobotSceneProps) {
       >
         <Suspense fallback={null}>
           <StudioLights />
-          <RobotFigure confused={confused} />
+          <RobotFigure confused={confused} reducedMotion={reduced} />
         </Suspense>
       </Canvas>
     </div>

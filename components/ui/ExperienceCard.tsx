@@ -52,13 +52,15 @@ export function ExperienceCard({ item, isHighlighted = false }: ExperienceCardPr
       </div>
 
       <footer className="exp-card-bottom">
-        <div className="exp-card-tech">
-          {item.tech.map((tech) => (
-            <span key={tech} className="exp-card-chip">
-              {tech}
-            </span>
-          ))}
-        </div>
+        {item.tech.length > 0 && (
+          <div className="exp-card-tech">
+            {item.tech.map((tech) => (
+              <span key={tech} className="exp-card-chip">
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
 
         <div className="exp-card-badges">
           {item.metrics.map((metric) => (

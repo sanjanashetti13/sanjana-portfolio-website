@@ -23,13 +23,20 @@ export async function handleContactPost(body: unknown) {
   const from = process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev";
   const to = process.env.CONTACT_TO_EMAIL || profile.email;
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from,
     to,
     replyTo: data.email,
     subject: `Portfolio contact from ${data.name}`,
     text: `Name: ${data.name}\nEmail: ${data.email}\n\n${data.message}`,
   });
+
+  if (error) {
+    return Response.json(
+      { error: error.message || "Failed to send email" },
+      { status: 502 }
+    );
+  }
 
   return Response.json({ success: true });
 }

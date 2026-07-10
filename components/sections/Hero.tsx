@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { ResumeViewer } from "@/components/ui/ResumeViewer";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { useHeroNavName } from "@/components/layout/HeroNavNameContext";
+import { useSplash } from "@/components/layout/SplashContext";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { motionEase } from "@/lib/utils";
 
@@ -17,7 +18,10 @@ const STAGGER = 0.1;
 
 export function Hero() {
   const reduced = usePrefersReducedMotion();
+  const { phase, heroRobotRef } = useSplash();
   const { heroNameRef, registerHero, unregisterHero } = useHeroNavName();
+  const showContent = phase === "transition" || phase === "complete";
+  const showRobot = phase === "complete";
 
   useEffect(() => {
     registerHero();
@@ -25,21 +29,29 @@ export function Hero() {
   }, [registerHero, unregisterHero]);
 
   const fadeUp = (delay: number, duration = 0.7) =>
-    reduced
-      ? {}
+    reduced || !showContent
+      ? { initial: { opacity: 0 }, animate: { opacity: showContent ? 1 : 0 } }
       : {
           initial: { opacity: 0, y: 28 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration, ease: motionEase, delay },
+          transition: {
+            duration,
+            ease: motionEase,
+            delay: phase === "transition" ? delay + 0.25 : delay,
+          },
         };
 
   const fadeScale = (delay: number) =>
-    reduced
-      ? {}
+    reduced || !showContent
+      ? { initial: { opacity: 0 }, animate: { opacity: showContent ? 1 : 0 } }
       : {
           initial: { opacity: 0, scale: 0.96 },
           animate: { opacity: 1, scale: 1 },
-          transition: { duration: 0.7, ease: motionEase, delay },
+          transition: {
+            duration: 0.7,
+            ease: motionEase,
+            delay: phase === "transition" ? delay + 0.25 : delay,
+          },
         };
 
   return (
@@ -58,13 +70,21 @@ export function Hero() {
 
       <div className="hero-shell relative z-10 w-full">
         <div className="hero-grid">
-          <motion.div className="hero-robot" {...fadeScale(STAGGER * 0)}>
+          <motion.div
+            ref={heroRobotRef}
+            className="hero-robot"
+            initial={false}
+            animate={{ opacity: showRobot ? 1 : 0 }}
+            transition={{ duration: 0.35, ease: motionEase }}
+          >
             <div className="hero-robot-glow" aria-hidden="true" />
-            <ErrorBoundary>
-              <Suspense fallback={null}>
-                <RobotScene className="h-full w-full" />
-              </Suspense>
-            </ErrorBoundary>
+            {showRobot && (
+              <ErrorBoundary>
+                <Suspense fallback={null}>
+                  <RobotScene className="h-full w-full" />
+                </Suspense>
+              </ErrorBoundary>
+            )}
           </motion.div>
 
           <div className="hero-copy">
@@ -77,8 +97,12 @@ export function Hero() {
                 ref={heroNameRef}
                 className="text-hero-name hero-name-dock"
                 initial={reduced ? false : { opacity: 0 }}
-                animate={reduced ? undefined : { opacity: 1 }}
-                transition={{ duration: 0.75, ease: motionEase, delay: STAGGER * 1 }}
+                animate={reduced ? undefined : { opacity: showContent ? 1 : 0 }}
+                transition={{
+                  duration: 0.75,
+                  ease: motionEase,
+                  delay: phase === "transition" ? STAGGER * 1 + 0.25 : STAGGER * 1,
+                }}
               >
                 {profile.name}
               </motion.h1>
