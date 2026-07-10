@@ -1,0 +1,20 @@
+{
+  "presetId": "graphite-ice",
+  "colors": {
+    "background": "#090909",
+    "backgroundSoft": "#151515",
+    "surface": "#171717",
+    "surface2": "#2a2a2a",
+    "accent": "#DDE7F2",
+    "accentSecondary": "#FFB7C5",
+    "text": "#F5F8FC",
+    "textDim": "#bab6cb",
+    "textFaint": "#8b879c"
+  },
+  "radius": 16,
+  "glow": "medium",
+  "font": "space-grotesk",
+  "buttonStyle": "pill",
+  "spacing": "comfortable",
+  "animationSpeed": "normal"
+}
