@@ -2373,7 +2373,7 @@ h6,
   position: relative;
   isolation: isolate;
   background-color: var(--bg);
-  overflow-x: clip;
+  overflow-x: visible;
   padding-top: var(--section-padding-y);
   padding-bottom: var(--section-padding-y);
 }
@@ -2521,6 +2521,7 @@ h6,
   position: relative;
   margin-top: 20px;
   padding-top: 8px;
+  overflow: visible;
 }
 
 /* Circular 3D project gallery */
@@ -2557,6 +2558,17 @@ h6,
   position: relative;
   width: 100%;
   height: 100%;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.linear-gallery--dragging .linear-gallery__track {
+  cursor: grabbing;
+}
+
+.linear-gallery--dragging .circular-gallery-card__inner {
+  pointer-events: none;
 }
 
 .linear-gallery__slide {

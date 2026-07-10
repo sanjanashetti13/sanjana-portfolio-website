@@ -37,11 +37,14 @@ export interface CircularGalleryRef {
   rotateRight: () => void;
 }
 
-function getRelativeIndex(index: number, position: number, count: number): number {
-  let relative = index - position;
-  relative = ((relative % count) + count) % count;
-  if (relative > count / 2) relative -= count;
-  return relative;
+function getWrappedIndex(virtualIndex: number, count: number): number {
+  return ((virtualIndex % count) + count) % count;
+}
+
+function normalizePosition(position: number, count: number): number {
+  if (count <= 0) return position;
+  const normalized = position % count;
+  return normalized < 0 ? normalized + count : normalized;
 }
 
 function useCardMetrics() {
@@ -69,10 +72,27 @@ function useCardMetrics() {
 const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProps>(
   ({ items, className, autoRotateSpeed = 0.00075, onItemClick, ...props }, ref) => {
     const [position, setPosition] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
     const [manualActive, setManualActive] = useState(false);
     const animationFrameRef = useRef<number | null>(null);
     const manualTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
+    const positionRef = useRef(0);
+    const dragRef = useRef({
+      active: false,
+      startX: 0,
+      startPosition: 0,
+      moved: false,
+    });
     const { width: cardWidth, height: cardHeight, gap } = useCardMetrics();
+
+    positionRef.current = position;
+
+    useEffect(() => {
+      if (items.length > 0) {
+        setPosition(Math.floor(items.length / 2));
+      }
+    }, [items]);
 
     const pauseAutoRotate = () => {
       setManualActive(true);
@@ -86,11 +106,11 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
 
     useImperativeHandle(ref, () => ({
       rotateLeft: () => {
-        setPosition((prev) => prev - 1);
+        setPosition((prev) => normalizePosition(prev - 1, items.length));
         pauseAutoRotate();
       },
       rotateRight: () => {
-        setPosition((prev) => prev + 1);
+        setPosition((prev) => normalizePosition(prev + 1, items.length));
         pauseAutoRotate();
       },
     }));
@@ -100,7 +120,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
 
       const autoRotate = () => {
         if (!manualActive) {
-          setPosition((prev) => prev + autoRotateSpeed);
+          setPosition((prev) => normalizePosition(prev + autoRotateSpeed, items.length));
         }
         animationFrameRef.current = requestAnimationFrame(autoRotate);
       };
@@ -117,30 +137,97 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
       };
     }, [manualActive, autoRotateSpeed, items.length]);
 
-    if (items.length === 0) return null;
-
     const cardStep = cardWidth + gap;
+    const count = items.length;
+
+    const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (count <= 1 || event.button !== 0) return;
+
+      dragRef.current = {
+        active: true,
+        startX: event.clientX,
+        startPosition: positionRef.current,
+        moved: false,
+      };
+      setIsDragging(true);
+      pauseAutoRotate();
+      event.currentTarget.setPointerCapture(event.pointerId);
+    };
+
+    const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragRef.current.active || count <= 1) return;
+
+      const deltaX = event.clientX - dragRef.current.startX;
+      if (Math.abs(deltaX) > 6) {
+        dragRef.current.moved = true;
+      }
+
+      const deltaPosition = -deltaX / cardStep;
+      setPosition(dragRef.current.startPosition + deltaPosition);
+    };
+
+    const finishDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragRef.current.active) return;
+
+      const didMove = dragRef.current.moved;
+      dragRef.current.active = false;
+      setIsDragging(false);
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+
+      setPosition((prev) => normalizePosition(Math.round(prev), count));
+      pauseAutoRotate();
+
+      if (didMove) {
+        window.setTimeout(() => {
+          dragRef.current.moved = false;
+        }, 0);
+      }
+    };
+
+    if (items.length === 0) return null;
+    const center = Math.round(position * 1000) / 1000;
+    const visibleRadius = Math.min(3, Math.max(2, Math.ceil(count / 2)));
+    const virtualStart = Math.floor(center) - visibleRadius;
+    const virtualEnd = Math.floor(center) + visibleRadius;
+    const virtualSlides: { virtualIndex: number; item: GalleryItem; itemIndex: number }[] = [];
+
+    for (let virtualIndex = virtualStart; virtualIndex <= virtualEnd; virtualIndex += 1) {
+      const itemIndex = getWrappedIndex(virtualIndex, count);
+      virtualSlides.push({
+        virtualIndex,
+        item: items[itemIndex],
+        itemIndex,
+      });
+    }
 
     return (
       <div
         role="region"
-        aria-label="Project gallery"
-        className={cn("linear-gallery", className)}
+        aria-label="Project gallery — drag left or right to browse"
+        className={cn("linear-gallery", isDragging && "linear-gallery--dragging", className)}
         {...props}
       >
-        <div className="linear-gallery__track">
-          {items.map((item, index) => {
-            const relative = getRelativeIndex(index, position, items.length);
+        <div
+          ref={trackRef}
+          className="linear-gallery__track"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={finishDrag}
+          onPointerCancel={finishDrag}
+        >
+          {virtualSlides.map(({ virtualIndex, item, itemIndex }) => {
+            const relative = virtualIndex - position;
             const absRelative = Math.abs(relative);
-            const isVisible = absRelative <= 1.65;
             const isActive = absRelative < 0.35;
             const translateX = relative * cardStep;
-            const opacity = !isVisible ? 0 : isActive ? 1 : Math.max(0.42, 1 - absRelative * 0.38);
-            const scale = isActive ? 1 : Math.max(0.9, 1 - absRelative * 0.06);
+            const opacity = isActive ? 1 : Math.max(0.52, 1 - absRelative * 0.22);
+            const scale = isActive ? 1 : Math.max(0.92, 1 - absRelative * 0.04);
 
             return (
               <div
-                key={item.id ?? item.title}
+                key={`${item.id ?? item.title}-${virtualIndex}`}
                 role="group"
                 aria-label={item.title}
                 className={cn("linear-gallery__slide", isActive && "linear-gallery__slide--active")}
@@ -182,6 +269,10 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action"
+                            draggable={false}
+                            onClick={(event) => {
+                              if (dragRef.current.moved) event.preventDefault();
+                            }}
                           >
                             <Github className="h-3.5 w-3.5" aria-hidden="true" />
                             GitHub
@@ -193,6 +284,10 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action circular-gallery-card__action--primary"
+                            draggable={false}
+                            onClick={(event) => {
+                              if (dragRef.current.moved) event.preventDefault();
+                            }}
                           >
                             <Globe className="h-3.5 w-3.5" aria-hidden="true" />
                             Live Demo
@@ -204,6 +299,10 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action"
+                            draggable={false}
+                            onClick={(event) => {
+                              if (dragRef.current.moved) event.preventDefault();
+                            }}
                           >
                             <ClipboardList className="h-3.5 w-3.5" aria-hidden="true" />
                             Report
@@ -215,6 +314,10 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action"
+                            draggable={false}
+                            onClick={(event) => {
+                              if (dragRef.current.moved) event.preventDefault();
+                            }}
                           >
                             <FileText className="h-3.5 w-3.5" aria-hidden="true" />
                             Paper
@@ -225,7 +328,11 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                       <button
                         type="button"
                         className="circular-gallery-card__open"
-                        onClick={() => onItemClick?.(item, index)}
+                        onClick={() => {
+                          if (!dragRef.current.moved) {
+                            onItemClick?.(item, itemIndex);
+                          }
+                        }}
                         aria-label={`View details for ${item.title}`}
                       >
                         <ArrowUpRight className="h-4 w-4" aria-hidden="true" />

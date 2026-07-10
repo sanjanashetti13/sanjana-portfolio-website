@@ -73,7 +73,7 @@ export function Projects() {
           <div className="projects-header-copy">
             <h2 className="projects-title projects-title--scroll">My Projects</h2>
             <p className="projects-subtitle projects-subtitle--scroll">
-              Use the arrows to browse projects. Click a card to explore details.
+              Drag left or right to browse projects. Click a card to explore details.
             </p>
           </div>
         </motion.header>

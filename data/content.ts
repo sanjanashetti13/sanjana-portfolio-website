@@ -143,6 +143,7 @@ export type ProjectSection = "featured" | "production" | "research";
 export type ProjectContext =
   | "Personal Project"
   | "Research"
+  | "Course Project"
   | "Internship"
   | "Freelance";
 
@@ -249,7 +250,7 @@ export const projects: Project[] = [
     slug: "multimodal-research-paper-copilot",
     section: "production",
     typeBadge: "AI",
-    typeLabel: "Generative AI",
+    typeLabel: "Generative AI · Course Project",
     filters: ["AI", "Research"],
     category: "AI",
     tag: "Generative AI",
@@ -283,7 +284,7 @@ export const projects: Project[] = [
     badge: null,
     year: "2025",
     teamSize: 1,
-    context: "Internship",
+    context: "Course Project",
     problem:
       "Literature review is slow when researchers must cross-reference dense papers, diagrams, and prior context while ensuring every claim stays citation-accurate.",
     solution:

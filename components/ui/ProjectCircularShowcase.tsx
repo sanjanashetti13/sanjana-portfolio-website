@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useRef, type CSSProperties } from "react";
-import { ArrowUpRight, ChevronLeft, ChevronRight, ClipboardList, FileText, Github, Globe } from "lucide-react";
+import { useCallback, useMemo, type CSSProperties } from "react";
+import { ArrowUpRight, ClipboardList, FileText, Github, Globe } from "lucide-react";
 import type { Project } from "@/data/content";
-import { CircularGallery, type CircularGalleryRef, type GalleryItem } from "@/components/ui/circular-gallery";
+import { CircularGallery, type GalleryItem } from "@/components/ui/circular-gallery";
 import { ProjectHighlightPills } from "@/components/ui/ProjectHighlightPills";
 import { projectsToGalleryItems } from "@/lib/projectGallery";
 import { usePrefersReducedMotion } from "@/lib/hooks";
@@ -18,7 +18,6 @@ interface ProjectCircularShowcaseProps {
 
 export function ProjectCircularShowcase({ projects, onSelect }: ProjectCircularShowcaseProps) {
   const reduced = usePrefersReducedMotion();
-  const galleryRef = useRef<CircularGalleryRef>(null);
 
   const galleryItems = useMemo(() => projectsToGalleryItems(projects), [projects]);
   const projectBySlug = useMemo(
@@ -133,31 +132,9 @@ export function ProjectCircularShowcase({ projects, onSelect }: ProjectCircularS
 
   return (
     <div className="projects-circular-viewport">
-      <button
-        type="button"
-        className="projects-circular-nav projects-circular-nav--prev"
-        onClick={() => galleryRef.current?.rotateLeft()}
-        aria-label="Previous project"
-      >
-        <ChevronLeft aria-hidden="true" />
-      </button>
-
       <div className="projects-circular-stage">
-        <CircularGallery
-          ref={galleryRef}
-          items={galleryItems}
-          onItemClick={handleItemClick}
-        />
+        <CircularGallery items={galleryItems} onItemClick={handleItemClick} />
       </div>
-
-      <button
-        type="button"
-        className="projects-circular-nav projects-circular-nav--next"
-        onClick={() => galleryRef.current?.rotateRight()}
-        aria-label="Next project"
-      >
-        <ChevronRight aria-hidden="true" />
-      </button>
     </div>
   );
 }
