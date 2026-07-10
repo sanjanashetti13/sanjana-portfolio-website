@@ -1,4 +1,4 @@
-import type { Project, ProjectHighlightPill } from "@/data/content";
+import type { Project } from "@/data/content";
 import type { GalleryItem } from "@/components/ui/circular-gallery";
 import { getProjectTheme, getProjectLabel } from "@/lib/projectTheme";
 

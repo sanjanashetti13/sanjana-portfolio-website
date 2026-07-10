@@ -3,7 +3,7 @@ import { ArrowUpRight, ChevronLeft, ChevronRight, ClipboardList, FileText, Githu
 import type { Project } from "@/data/content";
 import { CircularGallery, type CircularGalleryRef, type GalleryItem } from "@/components/ui/circular-gallery";
 import { ProjectHighlightPills } from "@/components/ui/ProjectHighlightPills";
-import { projectToGalleryItem, projectsToGalleryItems } from "@/lib/projectGallery";
+import { projectsToGalleryItems } from "@/lib/projectGallery";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { getProjectTheme } from "@/lib/projectTheme";
 
