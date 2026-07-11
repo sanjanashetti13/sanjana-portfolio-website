@@ -2372,10 +2372,76 @@ h6,
 .projects-section {
   position: relative;
   isolation: isolate;
-  background-color: var(--bg);
+  background: transparent;
   overflow-x: visible;
   padding-top: var(--section-padding-y);
   padding-bottom: var(--section-padding-y);
+}
+
+.projects-showcase {
+  position: relative;
+  z-index: 2;
+  margin-top: 20px;
+  padding-top: 8px;
+  overflow: visible;
+}
+
+.projects-section .circular-gallery-card__inner {
+  border-color: color-mix(in srgb, var(--line) 88%, #000);
+  background:
+    radial-gradient(
+      ellipse 75% 55% at 50% 0%,
+      color-mix(in srgb, var(--gallery-accent) 10%, transparent),
+      transparent 68%
+    ),
+    linear-gradient(165deg, rgba(12, 12, 16, 0.99) 0%, rgba(6, 6, 10, 0.98) 100%);
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.62),
+    0 0 0 1px color-mix(in srgb, var(--gallery-accent) 14%, transparent) inset;
+  backdrop-filter: blur(6px);
+}
+
+.projects-section .linear-gallery__slide--active .circular-gallery-card__inner {
+  border-color: color-mix(in srgb, var(--gallery-accent) 42%, var(--line));
+  box-shadow:
+    0 24px 52px rgba(0, 0, 0, 0.68),
+    0 0 28px color-mix(in srgb, var(--gallery-glow) 55%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--gallery-accent) 22%, transparent) inset;
+}
+
+.projects-section .circular-gallery-card:hover .circular-gallery-card__inner {
+  border-color: color-mix(in srgb, var(--gallery-accent) 48%, var(--line));
+  box-shadow:
+    0 26px 56px rgba(0, 0, 0, 0.72),
+    0 0 36px color-mix(in srgb, var(--gallery-glow) 65%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--gallery-accent) 26%, transparent) inset;
+}
+
+.projects-section .circular-gallery-card__action,
+.projects-section .circular-gallery-card__open {
+  background: rgba(5, 5, 9, 0.92);
+  border-color: color-mix(in srgb, var(--line) 92%, #000);
+}
+
+.projects-section .circular-gallery-card__action--primary {
+  background: color-mix(in srgb, var(--gallery-accent) 14%, rgba(5, 5, 9, 0.94));
+}
+
+.projects-section .circular-gallery-card__meta {
+  border-top-color: color-mix(in srgb, var(--line) 80%, #000);
+}
+
+.light .projects-section .circular-gallery-card__inner {
+  background:
+    radial-gradient(
+      ellipse 75% 55% at 50% 0%,
+      color-mix(in srgb, var(--gallery-accent) 8%, transparent),
+      transparent 68%
+    ),
+    linear-gradient(165deg, rgba(255, 255, 255, 0.99) 0%, rgba(248, 250, 253, 0.98) 100%);
+  box-shadow:
+    0 18px 40px rgba(20, 26, 34, 0.14),
+    0 0 0 1px color-mix(in srgb, var(--gallery-accent) 12%, transparent) inset;
 }
 
 .projects-shell {
@@ -2515,13 +2581,6 @@ h6,
 .projects-search-input:focus {
   border-color: rgba(167, 139, 255, 0.45);
   box-shadow: 0 0 0 3px rgba(167, 139, 255, 0.08);
-}
-
-.projects-showcase {
-  position: relative;
-  margin-top: 20px;
-  padding-top: 8px;
-  overflow: visible;
 }
 
 /* Circular 3D project gallery */
@@ -2811,13 +2870,14 @@ h6,
   flex-direction: column;
   gap: 12px;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid color-mix(in srgb, var(--line) 88%, #000);
   border-radius: 12px;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, var(--gallery-accent) 16%, transparent), transparent 70%),
-    var(--surface);
+    radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, var(--gallery-accent) 10%, transparent), transparent 70%),
+    linear-gradient(165deg, rgba(12, 12, 16, 0.99) 0%, rgba(6, 6, 10, 0.98) 100%);
   padding: 18px 16px;
   text-align: left;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
   transition:
     transform var(--transition-base, 0.32s),
     border-color var(--transition-base, 0.32s),
@@ -3971,7 +4031,7 @@ h6,
 .github-section {
   position: relative;
   isolation: isolate;
-  background-color: var(--bg);
+  background: transparent;
   overflow-x: clip;
   padding-top: calc(var(--section-padding-y) + 48px);
   padding-bottom: calc(var(--section-padding-y) + 64px);
@@ -3980,7 +4040,7 @@ h6,
 .github-shell {
   position: relative;
   z-index: 2;
-  width: min(94vw, 1280px);
+  width: min(94vw, 920px);
   margin-left: auto;
   margin-right: auto;
   padding-left: clamp(16px, 2vw, 32px);
@@ -4025,10 +4085,16 @@ h6,
 .github-content-loading {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 24px;
+  width: 100%;
+  margin-inline: auto;
 }
 
 .github-graph-card {
+  width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
   padding: 28px;
   border-radius: var(--radius-card);
   border: 1px solid var(--line);
@@ -4039,6 +4105,7 @@ h6,
 .github-contributions-wrap {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
   overflow-x: auto;
   padding-bottom: 4px;
@@ -4046,18 +4113,21 @@ h6,
 }
 
 .github-contributions-calendar {
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
+  margin-inline: auto;
 }
 
 .github-contributions-calendar .react-activity-calendar__scroll-container {
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
+  margin-inline: auto;
 }
 
 .github-contributions-calendar svg.react-activity-calendar__calendar {
   display: block;
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   height: auto;
   margin-inline: auto;
 }

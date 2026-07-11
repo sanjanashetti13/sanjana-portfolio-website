@@ -27,20 +27,6 @@ export function Contact() {
       const data = (await res.json().catch(() => ({}))) as { error?: string };
 
       if (!res.ok) {
-        if (res.status === 503) {
-          const subject = encodeURIComponent(`Portfolio contact from ${form.name}`);
-          const body = encodeURIComponent(
-            `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
-          );
-          window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-          toast({
-            title: "Opening your email app",
-            description: "Finish sending the message from your mail client.",
-          });
-          setForm({ name: "", email: "", message: "" });
-          return;
-        }
-
         throw new Error(data.error || "Failed to send message");
       }
 
@@ -85,8 +71,15 @@ export function Contact() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                <Button magnetic asChild>
-                  <a href={`mailto:${profile.email}`}>Email Me</a>
+                <Button variant="ghost" asChild>
+                  <a
+                    href={`mailto:${profile.email}`}
+                    onClick={(event) => {
+                      event.currentTarget.blur();
+                    }}
+                  >
+                    Email Me
+                  </a>
                 </Button>
                 <Button variant="ghost" asChild>
                   <a href={profile.github} target="_blank" rel="noopener noreferrer">
@@ -127,12 +120,13 @@ export function Contact() {
                   </div>
                   <div>
                     <label htmlFor="email" className="text-label text-[var(--ink-faint)]">
-                      Email
+                      Your mail id
                     </label>
                     <input
                       id="email"
                       type="email"
                       required
+                      autoComplete="email"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       className="mt-2 w-full rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--bg)] px-4 py-3 text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--violet)]"

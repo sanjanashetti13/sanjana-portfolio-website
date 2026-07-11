@@ -229,7 +229,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
             const absRelative = Math.abs(relative);
             const isActive = absRelative < 0.35;
             const translateX = relative * cardStep;
-            const opacity = isActive ? 1 : Math.max(0.52, 1 - absRelative * 0.22);
+            const opacity = isActive ? 1 : Math.max(0.78, 1 - absRelative * 0.14);
             const scale = isActive ? 1 : Math.max(0.92, 1 - absRelative * 0.04);
 
             return (

@@ -1,7 +1,11 @@
 import { cloneElement, useCallback, useEffect, useRef, useState } from "react";
-import { GitHubCalendar } from "react-github-calendar";
+import { ActivityCalendar } from "react-activity-calendar";
 import { useTheme } from "next-themes";
-import { fetchGitHubContributions, GITHUB_USERNAME } from "@/lib/github";
+import {
+  fetchGitHubContributions,
+  GITHUB_USERNAME,
+  type GitHubContributionDay,
+} from "@/lib/github";
 
 const GITHUB_GREEN_THEME = {
   light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
@@ -15,7 +19,7 @@ const WEEKDAY_LABEL_OFFSET = 36;
 function getBlockSize(containerWidth: number): number {
   const availableWidth = Math.max(containerWidth - WEEKDAY_LABEL_OFFSET, 320);
   const calculated = Math.floor(availableWidth / WEEKS_IN_YEAR - BLOCK_MARGIN);
-  return Math.min(Math.max(calculated, 10), 16);
+  return Math.min(Math.max(calculated, 10), 14);
 }
 
 type GitHubContributionGraphProps = {
@@ -33,17 +37,17 @@ export function GitHubContributionGraph({
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
-  const [ready, setReady] = useState(false);
+  const [contributions, setContributions] = useState<GitHubContributionDay[]>([]);
   const [error, setError] = useState(false);
   const [blockSize, setBlockSize] = useState(12);
 
-  const validateContributions = useCallback(async () => {
+  const loadContributions = useCallback(async () => {
     setError(false);
-    setReady(false);
+    setContributions([]);
 
     try {
-      await fetchGitHubContributions(username);
-      setReady(true);
+      const data = await fetchGitHubContributions(username);
+      setContributions(data.contributions);
       onLoad?.();
     } catch {
       setError(true);
@@ -55,12 +59,12 @@ export function GitHubContributionGraph({
 
   useEffect(() => {
     if (!mounted) return;
-    void validateContributions();
-  }, [mounted, retryKey, validateContributions]);
+    void loadContributions();
+  }, [mounted, retryKey, loadContributions]);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || contributions.length === 0) return;
 
     const updateBlockSize = () => {
       setBlockSize(getBlockSize(container.clientWidth));
@@ -72,7 +76,7 @@ export function GitHubContributionGraph({
     observer.observe(container);
 
     return () => observer.disconnect();
-  }, [ready, mounted]);
+  }, [contributions.length, mounted]);
 
   if (!mounted) {
     return <div className="github-graph-skeleton" aria-hidden="true" />;
@@ -93,15 +97,15 @@ export function GitHubContributionGraph({
     );
   }
 
-  if (!ready) {
+  if (contributions.length === 0) {
     return <div className="github-graph-skeleton" aria-hidden="true" />;
   }
 
   return (
     <div ref={containerRef} className="github-contributions-wrap">
-      <GitHubCalendar
-        key={`${retryKey}-${blockSize}`}
-        username={username}
+      <ActivityCalendar
+        key={`${retryKey}-${blockSize}-${contributions.length}`}
+        data={contributions}
         colorScheme={resolvedTheme === "light" ? "light" : "dark"}
         theme={GITHUB_GREEN_THEME}
         blockSize={blockSize}
@@ -109,6 +113,7 @@ export function GitHubContributionGraph({
         blockRadius={2}
         fontSize={13}
         showWeekdayLabels
+        maxLevel={4}
         className="github-contributions-calendar"
         labels={{
           totalCount: "{{count}} contributions in the last year",

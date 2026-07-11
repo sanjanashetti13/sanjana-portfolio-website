@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { useScrollProgressRef } from "@/lib/scrollProgress";
-import { achievementRobotLift, educationRobotLift } from "@/lib/scrollRobotZones";
+import { achievementRobotLift, educationRobotLift, projectsGithubRobotDim } from "@/lib/scrollRobotZones";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { motionEase } from "@/lib/utils";
 
@@ -44,12 +44,12 @@ export function ScrollRobotBackground() {
 
         if (p < 0.12) {
           opacity = 0;
-        } else if (p < 0.58) {
-          opacity = 1;
         } else if (p < 0.66) {
-          opacity = easeFade(p, 0.58, 0.66);
+          opacity = 1;
         } else if (p < 0.72) {
-          opacity = easeFadeIn(p, 0.66, 0.72);
+          opacity = easeFade(p, 0.66, 0.72);
+        } else if (p < 0.76) {
+          opacity = easeFadeIn(p, 0.72, 0.76);
         } else if (p < 0.86) {
           opacity = 1;
         } else if (p < 0.92) {
@@ -61,9 +61,10 @@ export function ScrollRobotBackground() {
         const achievementLift = achievementRobotLift(p);
         const educationLift = educationRobotLift(p);
         const liftVh = achievementLift * 16 + educationLift * 38;
+        const dim = projectsGithubRobotDim(p);
 
-        el.style.opacity = String(opacity);
-        el.style.visibility = opacity < 0.02 ? "hidden" : "visible";
+        el.style.opacity = String(opacity * dim);
+        el.style.visibility = opacity * dim < 0.02 ? "hidden" : "visible";
 
         if (desktopQuery.matches) {
           el.style.top = "50%";
