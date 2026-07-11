@@ -1,13 +1,10 @@
 import { z } from "zod";
-import { Resend } from "resend";
 
 export const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Valid email is required"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
-
-export type ContactPayload = z.infer<typeof contactSchema>;
 
 export type ContactResult =
   | { ok: true; id: string }
@@ -43,33 +40,44 @@ export async function sendContactMessage(body: unknown): Promise<ContactResult> 
     };
   }
 
-  const resend = new Resend(apiKey);
   const from =
     process.env.CONTACT_FROM_EMAIL || "Sanjana Portfolio <onboarding@resend.dev>";
 
-  const { data, error } = await resend.emails.send({
-    from,
-    to: [to],
-    replyTo: contact.email,
-    subject: `Portfolio message from ${contact.name}`,
-    text: `Name: ${contact.name}\nEmail: ${contact.email}\n\n${contact.message}`,
-    html: `
-      <div style="font-family: system-ui, sans-serif; line-height: 1.6; color: #111;">
-        <p><strong>Name:</strong> ${escapeHtml(contact.name)}</p>
-        <p><strong>Email:</strong> ${escapeHtml(contact.email)}</p>
-        <p><strong>Message:</strong></p>
-        <p style="white-space: pre-wrap;">${escapeHtml(contact.message)}</p>
-      </div>
-    `.trim(),
+  const resendResponse = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      reply_to: contact.email,
+      subject: `Portfolio message from ${contact.name}`,
+      text: `Name: ${contact.name}\nEmail: ${contact.email}\n\n${contact.message}`,
+      html: `
+        <div style="font-family: system-ui, sans-serif; line-height: 1.6; color: #111;">
+          <p><strong>Name:</strong> ${escapeHtml(contact.name)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(contact.email)}</p>
+          <p><strong>Message:</strong></p>
+          <p style="white-space: pre-wrap;">${escapeHtml(contact.message)}</p>
+        </div>
+      `.trim(),
+    }),
   });
 
-  if (error) {
-    const message = error.message || "Failed to send email";
+  const resendData = (await resendResponse.json().catch(() => ({}))) as {
+    id?: string;
+    message?: string;
+  };
+
+  if (!resendResponse.ok) {
+    const message = resendData.message || "Failed to send email";
     const status = message.toLowerCase().includes("only send testing emails") ? 403 : 502;
     return { ok: false, status, error: message };
   }
 
-  if (!data?.id) {
+  if (!resendData.id) {
     return {
       ok: false,
       status: 502,
@@ -77,5 +85,5 @@ export async function sendContactMessage(body: unknown): Promise<ContactResult> 
     };
   }
 
-  return { ok: true, id: data.id };
+  return { ok: true, id: resendData.id };
 }

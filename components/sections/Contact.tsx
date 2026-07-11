@@ -28,14 +28,9 @@ export function Contact() {
 
       if (!res.ok) {
         if (res.status === 404) {
-          throw new Error("Contact service is unavailable on this deployment");
+          throw new Error("Contact API is missing on this deployment");
         }
-        if (res.status === 503) {
-          throw new Error(
-            data.error || "Contact email service is not configured on the server"
-          );
-        }
-        throw new Error(data.error || "Failed to send message");
+        throw new Error(data.error || `Request failed (${res.status})`);
       }
 
       toast({
