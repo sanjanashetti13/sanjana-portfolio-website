@@ -46,9 +46,22 @@ function devApiPlugin(env: Record<string, string>): Plugin {
             response = await handleGitHubGet(requestUrl.searchParams.get("url"));
           } else if (url.startsWith("/api/contact")) {
             const body = await readRequestBody(req);
-            const { handleContactPost } = await import("./api/lib/contact");
+            const { sendContactMessage } = await import("./lib/server/contact");
             const parsedBody = body ? JSON.parse(body) : undefined;
-            response = await handleContactPost(parsedBody);
+
+            try {
+              const result = await sendContactMessage(parsedBody);
+              response = Response.json(
+                result.ok ? { success: true, id: result.id } : { error: result.error },
+                { status: result.ok ? 200 : result.status }
+              );
+            } catch (error) {
+              if (error instanceof SyntaxError) {
+                response = Response.json({ error: "Invalid JSON body" }, { status: 400 });
+              } else {
+                throw error;
+              }
+            }
           } else {
             return next();
           }

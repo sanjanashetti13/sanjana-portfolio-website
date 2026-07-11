@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { handleContactPost } from "./lib/contact";
 import { z } from "zod";
+import { sendContactMessage } from "../lib/server/contact";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -8,9 +8,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const response = await handleContactPost(req.body);
-    const body = await response.json();
-    return res.status(response.status).json(body);
+    const result = await sendContactMessage(req.body);
+
+    if (!result.ok) {
+      return res.status(result.status).json({ error: result.error });
+    }
+
+    return res.status(200).json({ success: true, id: result.id });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({

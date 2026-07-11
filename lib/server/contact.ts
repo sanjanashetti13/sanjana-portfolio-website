@@ -7,23 +7,40 @@ export const contactSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
-export async function handleContactPost(body: unknown) {
+export type ContactPayload = z.infer<typeof contactSchema>;
+
+export type ContactResult =
+  | { ok: true; id: string }
+  | { ok: false; status: number; error: string };
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+export async function sendContactMessage(body: unknown): Promise<ContactResult> {
   const contact = contactSchema.parse(body);
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    return Response.json(
-      { error: "Email service is not configured on the server" },
-      { status: 503 }
-    );
+    return {
+      ok: false,
+      status: 503,
+      error: "Email service is not configured on the server",
+    };
   }
 
   const to = process.env.CONTACT_TO_EMAIL;
   if (!to) {
-    return Response.json(
-      { error: "CONTACT_TO_EMAIL is not configured on the server" },
-      { status: 503 }
-    );
+    return {
+      ok: false,
+      status: 503,
+      error: "CONTACT_TO_EMAIL is not configured on the server",
+    };
   }
 
   const resend = new Resend(apiKey);
@@ -49,25 +66,16 @@ export async function handleContactPost(body: unknown) {
   if (error) {
     const message = error.message || "Failed to send email";
     const status = message.toLowerCase().includes("only send testing emails") ? 403 : 502;
-
-    return Response.json({ error: message }, { status });
+    return { ok: false, status, error: message };
   }
 
   if (!data?.id) {
-    return Response.json(
-      { error: "Email service accepted the request but did not return a delivery id." },
-      { status: 502 }
-    );
+    return {
+      ok: false,
+      status: 502,
+      error: "Email service accepted the request but did not return a delivery id.",
+    };
   }
 
-  return Response.json({ success: true, id: data.id });
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+  return { ok: true, id: data.id };
 }
