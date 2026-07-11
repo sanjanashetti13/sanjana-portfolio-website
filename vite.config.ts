@@ -46,15 +46,9 @@ function devApiPlugin(env: Record<string, string>): Plugin {
             response = await handleGitHubGet(requestUrl.searchParams.get("url"));
           } else if (url.startsWith("/api/contact")) {
             const body = await readRequestBody(req);
-            const request = new Request(requestUrl.toString(), {
-              method: req.method ?? "POST",
-              headers: {
-                "content-type": req.headers["content-type"] ?? "application/json",
-              },
-              body,
-            });
-            const { default: handler } = await import("./api/contact");
-            response = await handler(request);
+            const { handleContactPost } = await import("./api/lib/contact");
+            const parsedBody = body ? JSON.parse(body) : undefined;
+            response = await handleContactPost(parsedBody);
           } else {
             return next();
           }

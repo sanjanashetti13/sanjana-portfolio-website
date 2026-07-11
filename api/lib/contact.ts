@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { Resend } from "resend";
-import { profile } from "../../data/content";
 
 export const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -14,7 +13,15 @@ export async function handleContactPost(body: unknown) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "Email service is not configured" },
+      { error: "Email service is not configured on the server" },
+      { status: 503 }
+    );
+  }
+
+  const to = process.env.CONTACT_TO_EMAIL;
+  if (!to) {
+    return Response.json(
+      { error: "CONTACT_TO_EMAIL is not configured on the server" },
       { status: 503 }
     );
   }
@@ -22,7 +29,6 @@ export async function handleContactPost(body: unknown) {
   const resend = new Resend(apiKey);
   const from =
     process.env.CONTACT_FROM_EMAIL || "Sanjana Portfolio <onboarding@resend.dev>";
-  const to = process.env.CONTACT_TO_EMAIL || profile.email;
 
   const { data, error } = await resend.emails.send({
     from,

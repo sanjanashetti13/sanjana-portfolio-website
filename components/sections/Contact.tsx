@@ -27,6 +27,14 @@ export function Contact() {
       const data = (await res.json().catch(() => ({}))) as { error?: string };
 
       if (!res.ok) {
+        if (res.status === 404) {
+          throw new Error("Contact service is unavailable on this deployment");
+        }
+        if (res.status === 503) {
+          throw new Error(
+            data.error || "Contact email service is not configured on the server"
+          );
+        }
         throw new Error(data.error || "Failed to send message");
       }
 

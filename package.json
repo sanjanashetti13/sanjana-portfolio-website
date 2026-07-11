@@ -43,6 +43,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.173.0",
+    "@vercel/node": "^5.8.23",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9",
     "eslint-plugin-react-hooks": "^5.1.0",
