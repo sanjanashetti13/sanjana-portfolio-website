@@ -6,6 +6,39 @@ function isValidLink(url: string | null | undefined): url is string {
   return Boolean(url && url !== "#");
 }
 
+function getProjectLinkScore(project: Project): number {
+  return [project.github, project.demo, project.paper, project.report].filter(isValidLink).length;
+}
+
+/** Keep one entry per slug/title, preferring the version with more links. */
+export function dedupeProjects(projects: Project[]): Project[] {
+  const bestBySlug = new Map<string, Project>();
+  const bestByTitle = new Map<string, Project>();
+
+  for (const project of projects) {
+    const normalizedTitle = project.title.trim().toLowerCase();
+    const existingSlug = bestBySlug.get(project.slug);
+    if (!existingSlug || getProjectLinkScore(project) > getProjectLinkScore(existingSlug)) {
+      bestBySlug.set(project.slug, project);
+    }
+
+    const existingTitle = bestByTitle.get(normalizedTitle);
+    if (!existingTitle || getProjectLinkScore(project) > getProjectLinkScore(existingTitle)) {
+      bestByTitle.set(normalizedTitle, project);
+    }
+  }
+
+  const emitted = new Set<string>();
+  return projects.filter((project) => {
+    const normalizedTitle = project.title.trim().toLowerCase();
+    if (bestBySlug.get(project.slug) !== project) return false;
+    if (bestByTitle.get(normalizedTitle) !== project) return false;
+    if (emitted.has(project.slug)) return false;
+    emitted.add(project.slug);
+    return true;
+  });
+}
+
 export function projectToGalleryItem(project: Project): GalleryItem {
   const theme = getProjectTheme(project);
   const hasPaper = isValidLink(project.paper);

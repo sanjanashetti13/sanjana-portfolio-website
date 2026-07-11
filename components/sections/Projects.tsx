@@ -9,6 +9,7 @@ import {
 } from "@/data/content";
 import { ProjectDetailModal } from "@/components/ui/ProjectDetailModal";
 import { ProjectCircularShowcase } from "@/components/ui/ProjectCircularShowcase";
+import { dedupeProjects } from "@/lib/projectGallery";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { cn, motionEase, viewportReveal } from "@/lib/utils";
 
@@ -45,8 +46,10 @@ export function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const filteredProjects = useMemo(() => {
-    const filtered = projects.filter(
-      (project) => matchesFilter(project, activeFilter) && matchesSearch(project, searchQuery)
+    const filtered = dedupeProjects(
+      projects.filter(
+        (project) => matchesFilter(project, activeFilter) && matchesSearch(project, searchQuery)
+      )
     );
     return [...filtered].sort((a, b) => {
       if (a.featured && !b.featured) return -1;

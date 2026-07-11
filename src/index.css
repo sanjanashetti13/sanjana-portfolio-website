@@ -2636,9 +2636,10 @@ h6,
 .circular-gallery-card {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   height: 100%;
+  min-height: 0;
   border: none;
   background: transparent;
   padding: 0;
@@ -2649,7 +2650,8 @@ h6,
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: auto;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -2717,7 +2719,8 @@ h6,
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: auto;
+  flex-shrink: 0;
   padding-top: 0;
 }
 
@@ -2729,6 +2732,9 @@ h6,
 }
 
 .circular-gallery-card__action {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -2759,6 +2765,8 @@ h6,
 }
 
 .circular-gallery-card__open {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;

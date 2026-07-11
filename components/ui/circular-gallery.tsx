@@ -47,6 +47,12 @@ function normalizePosition(position: number, count: number): number {
   return normalized < 0 ? normalized + count : normalized;
 }
 
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest("a, button"));
+}
+
+const DRAG_THRESHOLD_PX = 8;
+
 function useCardMetrics() {
   const [metrics, setMetrics] = useState({ width: 280, height: 370, gap: 32 });
 
@@ -79,10 +85,10 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
     const trackRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef(0);
     const dragRef = useRef({
-      active: false,
+      pointerDown: false,
+      dragging: false,
       startX: 0,
       startPosition: 0,
-      moved: false,
     });
     const { width: cardWidth, height: cardHeight, gap } = useCardMetrics();
 
@@ -141,25 +147,28 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
     const count = items.length;
 
     const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-      if (count <= 1 || event.button !== 0) return;
+      if (count <= 1 || event.button !== 0 || isInteractiveTarget(event.target)) return;
 
       dragRef.current = {
-        active: true,
+        pointerDown: true,
+        dragging: false,
         startX: event.clientX,
         startPosition: positionRef.current,
-        moved: false,
       };
-      setIsDragging(true);
-      pauseAutoRotate();
-      event.currentTarget.setPointerCapture(event.pointerId);
     };
 
     const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-      if (!dragRef.current.active || count <= 1) return;
+      if (!dragRef.current.pointerDown || count <= 1) return;
 
       const deltaX = event.clientX - dragRef.current.startX;
-      if (Math.abs(deltaX) > 6) {
-        dragRef.current.moved = true;
+
+      if (!dragRef.current.dragging) {
+        if (Math.abs(deltaX) < DRAG_THRESHOLD_PX) return;
+
+        dragRef.current.dragging = true;
+        setIsDragging(true);
+        pauseAutoRotate();
+        event.currentTarget.setPointerCapture(event.pointerId);
       }
 
       const deltaPosition = -deltaX / cardStep;
@@ -167,22 +176,20 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
     };
 
     const finishDrag = (event: React.PointerEvent<HTMLDivElement>) => {
-      if (!dragRef.current.active) return;
+      if (!dragRef.current.pointerDown) return;
 
-      const didMove = dragRef.current.moved;
-      dragRef.current.active = false;
+      const wasDragging = dragRef.current.dragging;
+      dragRef.current.pointerDown = false;
+      dragRef.current.dragging = false;
       setIsDragging(false);
+
       if (event.currentTarget.hasPointerCapture(event.pointerId)) {
         event.currentTarget.releasePointerCapture(event.pointerId);
       }
 
-      setPosition((prev) => normalizePosition(Math.round(prev), count));
-      pauseAutoRotate();
-
-      if (didMove) {
-        window.setTimeout(() => {
-          dragRef.current.moved = false;
-        }, 0);
+      if (wasDragging) {
+        setPosition((prev) => normalizePosition(Math.round(prev), count));
+        pauseAutoRotate();
       }
     };
 
@@ -269,10 +276,6 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action"
-                            draggable={false}
-                            onClick={(event) => {
-                              if (dragRef.current.moved) event.preventDefault();
-                            }}
                           >
                             <Github className="h-3.5 w-3.5" aria-hidden="true" />
                             GitHub
@@ -284,10 +287,6 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action circular-gallery-card__action--primary"
-                            draggable={false}
-                            onClick={(event) => {
-                              if (dragRef.current.moved) event.preventDefault();
-                            }}
                           >
                             <Globe className="h-3.5 w-3.5" aria-hidden="true" />
                             Live Demo
@@ -299,10 +298,6 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action"
-                            draggable={false}
-                            onClick={(event) => {
-                              if (dragRef.current.moved) event.preventDefault();
-                            }}
                           >
                             <ClipboardList className="h-3.5 w-3.5" aria-hidden="true" />
                             Report
@@ -314,10 +309,6 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                             target="_blank"
                             rel="noopener noreferrer"
                             className="circular-gallery-card__action"
-                            draggable={false}
-                            onClick={(event) => {
-                              if (dragRef.current.moved) event.preventDefault();
-                            }}
                           >
                             <FileText className="h-3.5 w-3.5" aria-hidden="true" />
                             Paper
@@ -328,11 +319,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
                       <button
                         type="button"
                         className="circular-gallery-card__open"
-                        onClick={() => {
-                          if (!dragRef.current.moved) {
-                            onItemClick?.(item, itemIndex);
-                          }
-                        }}
+                        onClick={() => onItemClick?.(item, itemIndex)}
                         aria-label={`View details for ${item.title}`}
                       >
                         <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
