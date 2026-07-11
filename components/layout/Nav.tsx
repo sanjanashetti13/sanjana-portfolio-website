@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { profile } from "@/data/content";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -15,7 +16,12 @@ const navLinks = [
 ];
 
 export function Nav() {
-  const { navNameRef } = useHeroNavName();
+  const { navNameRef, registerNav, unregisterNav } = useHeroNavName();
+
+  useEffect(() => {
+    registerNav();
+    return unregisterNav;
+  }, [registerNav, unregisterNav]);
 
   return (
     <header

@@ -92,21 +92,20 @@ export function Hero() {
               Hello! I&apos;m
             </motion.p>
 
-            <div className="hero-name-slot">
-              <motion.h1
-                ref={heroNameRef}
-                className="text-hero-name hero-name-dock"
-                initial={reduced ? false : { opacity: 0 }}
-                animate={reduced ? undefined : { opacity: showContent ? 1 : 0 }}
-                transition={{
-                  duration: 0.75,
-                  ease: motionEase,
-                  delay: phase === "transition" ? STAGGER * 1 + 0.25 : STAGGER * 1,
-                }}
-              >
+            <motion.div
+              className="hero-name-slot"
+              initial={reduced ? false : { opacity: 0, y: 20 }}
+              animate={reduced ? undefined : { opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
+              transition={{
+                duration: 0.75,
+                ease: motionEase,
+                delay: phase === "transition" ? STAGGER * 1 + 0.25 : STAGGER * 1,
+              }}
+            >
+              <h1 ref={heroNameRef} className="text-hero-name hero-name-dock">
                 {profile.name}
-              </motion.h1>
-            </div>
+              </h1>
+            </motion.div>
 
             <motion.h2 className="text-hero-title" {...fadeUp(STAGGER * 2, 0.75)}>
               <span className="gradient-text">{profile.heroTitle}</span>

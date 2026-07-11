@@ -18,6 +18,8 @@ type HeroNavNameContextValue = {
   isHome: boolean;
   registerHero: () => void;
   unregisterHero: () => void;
+  registerNav: () => void;
+  unregisterNav: () => void;
 };
 
 const HeroNavNameContext = createContext<HeroNavNameContextValue | null>(null);
@@ -28,15 +30,26 @@ export function HeroNavNameProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const [heroReady, setHeroReady] = useState(false);
+  const [navReady, setNavReady] = useState(false);
 
   const registerHero = useCallback(() => setHeroReady(true), []);
   const unregisterHero = useCallback(() => setHeroReady(false), []);
+  const registerNav = useCallback(() => setNavReady(true), []);
+  const unregisterNav = useCallback(() => setNavReady(false), []);
 
-  useHeroNameDock(heroNameRef, navNameRef, isHome && heroReady, isHome);
+  useHeroNameDock(heroNameRef, navNameRef, isHome && heroReady && navReady, isHome);
 
   return (
     <HeroNavNameContext.Provider
-      value={{ heroNameRef, navNameRef, isHome, registerHero, unregisterHero }}
+      value={{
+        heroNameRef,
+        navNameRef,
+        isHome,
+        registerHero,
+        unregisterHero,
+        registerNav,
+        unregisterNav,
+      }}
     >
       {children}
     </HeroNavNameContext.Provider>

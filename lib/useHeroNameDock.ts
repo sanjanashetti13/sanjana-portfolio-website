@@ -138,12 +138,16 @@ export function useHeroNameDock(
     };
 
     const mountDesktopDock = () => {
+      const heroSection = hero.closest(".hero-section");
+      if (!heroSection) return;
+
       trigger?.kill();
       metrics = captureMetrics(hero, nav);
       setNavVisible(nav, false);
+      applyDockProgress(0);
 
       trigger = ScrollTrigger.create({
-        trigger: ".hero-section",
+        trigger: heroSection,
         start: "top top",
         end: () => `+=${metrics.scrollDistance}`,
         scrub: 0.35,
@@ -153,6 +157,8 @@ export function useHeroNameDock(
         },
         onUpdate: (self) => applyDockProgress(self.progress),
       });
+
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     };
 
     const mountMobileDock = () => {
@@ -202,8 +208,15 @@ export function useHeroNameDock(
     applyMode();
     window.addEventListener("resize", onResize);
 
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onLoad);
+
+    const fontsReady = document.fonts?.ready;
+    fontsReady?.then(() => ScrollTrigger.refresh()).catch(() => undefined);
+
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("load", onLoad);
       removeMobileListener?.();
       trigger?.kill();
       clearHeroDockStyles(hero);
