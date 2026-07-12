@@ -52,29 +52,32 @@ export function ScrollRobotBackground() {
           opacity = easeFadeIn(p, 0.72, 0.76);
         } else if (p < 0.86) {
           opacity = 1;
-        } else if (p < 0.92) {
-          opacity = easeFade(p, 0.86, 0.92);
+        } else if (p < 0.97) {
+          opacity = 1;
+        } else if (p <= 1) {
+          opacity = easeFade(p, 0.97, 1);
         } else {
           opacity = 0;
         }
 
         const achievementLift = achievementRobotLift(p);
         const educationLift = educationRobotLift(p);
-        const liftVh = achievementLift * 16 + educationLift * 38;
+        // Achievement nudges up; education nudges down so the full robot stays in frame.
+        const liftVh = achievementLift * 14 - educationLift * 16;
         const dim = projectsGithubRobotDim(p);
 
         el.style.opacity = String(opacity * dim);
         el.style.visibility = opacity * dim < 0.02 ? "hidden" : "visible";
 
         if (desktopQuery.matches) {
-          el.style.top = "50%";
+          el.style.top = educationLift > 0.15 ? "56%" : "50%";
           el.style.transform = `translateY(calc(-50% - ${liftVh}vh))`;
           delete el.dataset.anchor;
         } else {
-          el.style.top = "";
+          el.style.top = educationLift > 0.15 ? "18%" : "";
           delete el.dataset.anchor;
-          const mobileLift = achievementLift * 6 + educationLift * 10;
-          el.style.transform = mobileLift > 0 ? `translateY(-${mobileLift}vh)` : "";
+          const mobileLift = achievementLift * 6 - educationLift * 8;
+          el.style.transform = mobileLift !== 0 ? `translateY(-${mobileLift}vh)` : "";
         }
       }
 
@@ -95,7 +98,7 @@ export function ScrollRobotBackground() {
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-[1] overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-[1] overflow-visible"
       aria-hidden="true"
     >
       <motion.div

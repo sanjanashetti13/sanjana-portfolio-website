@@ -1,6 +1,5 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { Suspense, lazy, useMemo, useState, type ReactNode } from "react";
 import { Download, ExternalLink } from "lucide-react";
-import { profile } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 import {
   Dialog,
@@ -9,36 +8,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { downloadResume, getResumeUrl, openResume } from "@/lib/resume";
+
+const ResumePdfPreview = lazy(() =>
+  import("@/components/ui/ResumePdfPreview").then((module) => ({
+    default: module.ResumePdfPreview,
+  }))
+);
 
 interface ResumeViewerProps {
   trigger: ReactNode;
   title?: string;
 }
 
-const RESUME_FILENAME = "Sanjana_Shetti_Resume.pdf";
-
-function getResumeHref(): string {
-  if (typeof window === "undefined") return profile.resumeUrl;
-  return new URL(profile.resumeUrl, window.location.origin).href;
-}
-
 export function ResumeViewer({ trigger, title = "Resume" }: ResumeViewerProps) {
   const [open, setOpen] = useState(false);
-  const resumeHref = useMemo(getResumeHref, [open]);
-
-  const handleOpen = () => {
-    window.open(resumeHref, "_blank", "noopener,noreferrer");
-  };
-
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = resumeHref;
-    link.download = RESUME_FILENAME;
-    link.rel = "noopener";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  };
+  const resumeUrl = useMemo(getResumeUrl, [open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -47,11 +32,16 @@ export function ResumeViewer({ trigger, title = "Resume" }: ResumeViewerProps) {
         <DialogHeader className="flex flex-row items-center justify-between gap-3 border-b border-[var(--line)] p-4 pr-12">
           <DialogTitle>{title}</DialogTitle>
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <Button variant="ghost" size="sm" type="button" onClick={handleOpen}>
+            <Button variant="ghost" size="sm" type="button" onClick={openResume}>
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
               Open
             </Button>
-            <Button variant="ghost" size="sm" type="button" onClick={handleDownload}>
+            <Button
+              variant="ghost"
+              size="sm"
+              type="button"
+              onClick={() => void downloadResume()}
+            >
               <Download className="h-4 w-4" aria-hidden="true" />
               Download
             </Button>
@@ -60,11 +50,15 @@ export function ResumeViewer({ trigger, title = "Resume" }: ResumeViewerProps) {
 
         <div className="relative h-[70vh] w-full bg-[var(--bg)]">
           {open && (
-            <iframe
-              src={`${resumeHref}#view=FitH`}
-              title={`${title} preview`}
-              className="h-full w-full border-0"
-            />
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center text-sm text-[var(--ink-dim)]">
+                  Loading resume…
+                </div>
+              }
+            >
+              <ResumePdfPreview src={resumeUrl} />
+            </Suspense>
           )}
         </div>
       </DialogContent>

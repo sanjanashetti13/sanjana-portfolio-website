@@ -109,7 +109,7 @@ export function ScrollRobotScene({
       <Canvas
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
         dpr={[1, 2]}
-        camera={{ fov: 24, position: [0, 0.72, 6.4], near: 0.1, far: 100 }}
+        camera={{ fov: 24, position: [0, 0.58, 6.4], near: 0.1, far: 100 }}
         style={{ background: "transparent" }}
         frameloop="always"
       >

@@ -25,8 +25,8 @@ export function Contact() {
                 Let&apos;s build something.
               </h2>
               <p className="mx-auto mt-4 max-w-lg text-body text-[var(--ink-dim)]">
-                Open to Software Engineer roles in full-stack and AI. Reach out — I usually reply
-                within a day.
+                Open to any Software Engineering roles in full-stack and AI. Reach me out by any of these
+                links below. I usually reply within a day.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">

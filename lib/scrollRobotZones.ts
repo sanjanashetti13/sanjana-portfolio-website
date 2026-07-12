@@ -42,6 +42,7 @@ export function scrollRobotLift(scrollProgress: number): number {
 }
 
 export function getRobotRigTargetY(scrollProgress: number): number {
-  const zoneLift = scrollRobotLift(scrollProgress);
-  return -scrollProgress * 1.35 + zoneLift * 1.55;
+  const achievementLift = achievementRobotLift(scrollProgress);
+  const educationLift = educationRobotLift(scrollProgress);
+  return -scrollProgress * 1.35 + achievementLift * 1.55 - educationLift * 0.45;
 }
