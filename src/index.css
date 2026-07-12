@@ -214,29 +214,17 @@ h6,
 
 .hero-robot {
   position: relative;
-  width: min(82vw, 420px);
-  height: min(34vh, 380px);
+  width: min(90vw, 520px);
+  height: min(50vh, 540px);
   flex-shrink: 0;
   order: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-robot-glow {
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  height: min(420px, 55vw);
-  width: min(420px, 55vw);
-  transform: translate(-50%, -50%);
-  border-radius: 9999px;
-  opacity: 0.25;
-  filter: blur(180px);
-  background: radial-gradient(
-    circle,
-    var(--glow-robot) 0%,
-    var(--glow-robot-secondary) 42%,
-    transparent 72%
-  );
-  pointer-events: none;
+  display: none;
 }
 
 .hero-copy {
@@ -318,8 +306,8 @@ h6,
     grid-row: 1;
     order: 0;
     width: 100%;
-    height: min(70vh, 680px);
-    max-height: 680px;
+    height: min(78vh, 760px);
+    max-height: 760px;
   }
 
   .hero-copy {

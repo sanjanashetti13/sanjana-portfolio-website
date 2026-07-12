@@ -19,5 +19,5 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src", "components", "data", "lib", "api"]
+  "include": ["src", "components", "data", "lib", "api", "types"]
 }

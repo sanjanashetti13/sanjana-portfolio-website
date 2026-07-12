@@ -1,18 +1,15 @@
-import { lazy, Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileText } from "lucide-react";
 import { profile } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 import { ResumeViewer } from "@/components/ui/ResumeViewer";
-import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { MinimalistHeroPortrait } from "@/components/ui/minimalist-hero";
+import { WomanCodingAnimation } from "@/components/ui/woman-coding-animation";
 import { useHeroNavName } from "@/components/layout/HeroNavNameContext";
 import { useSplash } from "@/components/layout/SplashContext";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { motionEase } from "@/lib/utils";
-
-const RobotScene = lazy(() =>
-  import("@/components/three/RobotScene").then((m) => ({ default: m.RobotScene }))
-);
 
 const STAGGER = 0.1;
 
@@ -21,7 +18,7 @@ export function Hero() {
   const { phase, heroRobotRef } = useSplash();
   const { heroNameRef, registerHero, unregisterHero } = useHeroNavName();
   const showContent = phase === "transition" || phase === "complete";
-  const showRobot = phase === "complete";
+  const showPortrait = phase === "complete";
 
   useEffect(() => {
     registerHero();
@@ -74,17 +71,12 @@ export function Hero() {
             ref={heroRobotRef}
             className="hero-robot"
             initial={false}
-            animate={{ opacity: showRobot ? 1 : 0 }}
+            animate={{ opacity: showPortrait ? 1 : 0 }}
             transition={{ duration: 0.35, ease: motionEase }}
           >
-            <div className="hero-robot-glow" aria-hidden="true" />
-            {showRobot && (
-              <ErrorBoundary>
-                <Suspense fallback={null}>
-                  <RobotScene className="h-full w-full" />
-                </Suspense>
-              </ErrorBoundary>
-            )}
+            <MinimalistHeroPortrait show={showPortrait}>
+              <WomanCodingAnimation />
+            </MinimalistHeroPortrait>
           </motion.div>
 
           <div className="hero-copy">
