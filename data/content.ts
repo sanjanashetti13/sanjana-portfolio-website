@@ -4,7 +4,7 @@ export const profile = {
   roles: ["Full-Stack Developer", "AI & GenAI Engineer", "Systems Builder"],
   heroTitle: "AI & Full Stack Developer",
   tagline:
-    "Software Engineer building full-stack platforms and production AI systems — from RAG pipelines to microservices architecture.",
+    "Computer Science Engineering Undergraduate building full-stack platforms and production AI systems, from RAG pipelines to microservices architecture.",
   location: "Hubli, Karnataka, India",
   email: "sanjanashetti13@gmail.com",
   phone: "9538840123",
