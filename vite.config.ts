@@ -2,18 +2,7 @@ import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
-import type { IncomingMessage, ServerResponse } from "http";
-
-async function readRequestBody(req: IncomingMessage): Promise<string | undefined> {
-  if (req.method === "GET" || req.method === "HEAD") return undefined;
-
-  const chunks: Buffer[] = [];
-  for await (const chunk of req) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-
-  return chunks.length > 0 ? Buffer.concat(chunks).toString("utf8") : undefined;
-}
+import type { ServerResponse } from "http";
 
 async function writeResponse(res: ServerResponse, response: Response) {
   res.statusCode = response.status;
@@ -44,24 +33,6 @@ function devApiPlugin(env: Record<string, string>): Plugin {
           } else if (url.startsWith("/api/github")) {
             const { handleGitHubGet } = await import("./api/lib/github");
             response = await handleGitHubGet(requestUrl.searchParams.get("url"));
-          } else if (url.startsWith("/api/contact")) {
-            const body = await readRequestBody(req);
-            const { sendContactMessage } = await import("./lib/server/contact");
-            const parsedBody = body ? JSON.parse(body) : undefined;
-
-            try {
-              const result = await sendContactMessage(parsedBody);
-              response = Response.json(
-                result.ok ? { success: true, id: result.id } : { error: result.error },
-                { status: result.ok ? 200 : result.status }
-              );
-            } catch (error) {
-              if (error instanceof SyntaxError) {
-                response = Response.json({ error: "Invalid JSON body" }, { status: 400 });
-              } else {
-                throw error;
-              }
-            }
           } else {
             return next();
           }
