@@ -59,7 +59,7 @@ function AppContent() {
 
       <LoadingScreen />
       <AppChrome />
-      <main className="relative">
+      <main className="relative overflow-x-clip">
         <ScrollToHash />
         <PageTransition>
           <Routes>

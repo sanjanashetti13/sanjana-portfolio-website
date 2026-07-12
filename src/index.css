@@ -85,6 +85,23 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+#root {
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -99,14 +116,6 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-body {
-  background-color: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-body), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -2373,7 +2382,7 @@ h6,
   position: relative;
   isolation: isolate;
   background: transparent;
-  overflow-x: visible;
+  overflow-x: clip;
   padding-top: var(--section-padding-y);
   padding-bottom: var(--section-padding-y);
 }
@@ -2383,7 +2392,7 @@ h6,
   z-index: 2;
   margin-top: 20px;
   padding-top: 8px;
-  overflow: visible;
+  overflow-x: clip;
 }
 
 .projects-section .circular-gallery-card__inner {
@@ -2590,11 +2599,9 @@ h6,
   align-items: center;
   justify-content: center;
   gap: clamp(10px, 2vw, 16px);
-  margin-left: calc(-1 * clamp(16px, 2vw, 32px));
-  margin-right: calc(-1 * clamp(16px, 2vw, 32px));
   min-height: 0;
   padding: 12px 0 8px;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .projects-circular-stage {
@@ -2603,14 +2610,14 @@ h6,
   width: 100%;
   max-width: min(94vw, 1040px);
   height: clamp(290px, 42vh, 320px);
-  overflow: visible;
+  overflow: hidden;
 }
 
 .linear-gallery {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .linear-gallery__track {

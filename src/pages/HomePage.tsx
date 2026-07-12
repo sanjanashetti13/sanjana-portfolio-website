@@ -17,7 +17,7 @@ export function HomePage() {
   return (
     <ScrollProgressProvider pageRef={pageRef}>
       <ScrollRobotBackground />
-      <div ref={pageRef} className="relative z-10">
+      <div ref={pageRef} className="relative z-10 overflow-x-clip">
         <Hero />
         <About />
         <Experience />
