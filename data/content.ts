@@ -2,9 +2,10 @@ export const profile = {
   name: "Sanjana Shetti",
   initials: "SS",
   roles: ["Full-Stack Developer", "AI & GenAI Engineer", "Systems Builder"],
-  heroTitle: "AI & Full Stack Developer",
+  heroTitle: "Computer Science Undergraduate",
+  heroFocus: "AI • Full-Stack • Machine Learning • Data Engineering",
   tagline:
-    "Computer Science Engineering Undergraduate building full-stack platforms and production AI systems, from RAG pipelines to microservices architecture.",
+    "Building production-ready AI systems while exploring machine learning research in LLMs, multimodal AI, retrieval systems, and intelligent automation.",
   location: "Hubli, Karnataka, India",
   email: "sanjanashetti13@gmail.com",
   phone: "9538840123",
@@ -12,7 +13,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/sanjana-shetti-8bb8072ab",
   resumeUrl: "/resume.pdf",
   avatarImageUrl: "/avatar/robot.png",
-  aboutPhotoUrl: "/avatar/sanjana.jpg",
+  aboutPhotoUrl: "/avatar/sanjana.png",
 };
 
 export const about = {

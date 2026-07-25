@@ -6,8 +6,9 @@ import {
   useTransform,
 } from "framer-motion";
 import { Quote } from "lucide-react";
-import { about, profile } from "@/data/content";
+import { about } from "@/data/content";
 import { FloatingKeywords } from "@/components/ui/FloatingKeywords";
+import { WomanCodingAnimation } from "@/components/ui/woman-coding-animation";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { motionEase, viewportReveal } from "@/lib/utils";
 
@@ -52,16 +53,8 @@ export function About() {
       </div>
 
       <div className="about-photo-col">
-        <div className="about-photo-wrap">
-          <img
-            src={profile.aboutPhotoUrl}
-            alt={`${profile.name} — professional headshot`}
-            className="about-photo"
-            width={420}
-            height={525}
-            loading="lazy"
-            decoding="async"
-          />
+        <div className="about-animation-wrap">
+          <WomanCodingAnimation className="about-animation" />
         </div>
       </div>
     </>
@@ -90,16 +83,8 @@ export function About() {
                   </motion.blockquote>
                 </div>
                 <motion.div className="about-photo-col" {...fadeUp(0.12)}>
-                  <div className="about-photo-wrap">
-                    <img
-                      src={profile.aboutPhotoUrl}
-                      alt={`${profile.name} — professional headshot`}
-                      className="about-photo"
-                      width={420}
-                      height={525}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                  <div className="about-animation-wrap">
+                    <WomanCodingAnimation className="about-animation" />
                   </div>
                 </motion.div>
               </div>

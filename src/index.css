@@ -257,15 +257,26 @@ h6,
 .text-hero-title {
   margin-top: 28px;
   font-family: var(--font-display), system-ui, sans-serif;
-  font-size: clamp(28px, 3.8vw, 56px);
+  font-size: clamp(22px, 2.8vw, 40px);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.02em;
   max-width: 100%;
 }
 
+.text-hero-focus {
+  margin-top: 14px;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: clamp(13px, 1.2vw, 16px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0.9;
+}
+
 .text-hero-description {
-  margin-top: 32px;
+  margin-top: 24px;
   font-size: clamp(17px, 1.8vw, 22px);
   line-height: 1.8;
   max-width: 100%;
@@ -698,6 +709,34 @@ h6,
   border-radius: 21px;
 }
 
+.about-animation-wrap {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(360px, 88vw);
+}
+
+.about-animation-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 8% 6% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.28), transparent 70%);
+  filter: blur(28px);
+  z-index: -1;
+}
+
+.about-animation {
+  width: 100%;
+}
+
+.about-animation img {
+  width: 100% !important;
+  max-width: none;
+}
+
 @media (min-width: 768px) {
   .about-grid {
     grid-template-columns: 1fr 1fr;
@@ -717,6 +756,11 @@ h6,
     width: 100%;
     max-width: 240px;
   }
+
+  .about-animation-wrap {
+    width: 100%;
+    max-width: 420px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -727,6 +771,10 @@ h6,
 
   .about-photo-wrap {
     max-width: 260px;
+  }
+
+  .about-animation-wrap {
+    max-width: 480px;
   }
 }
 

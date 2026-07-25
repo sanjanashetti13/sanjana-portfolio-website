@@ -130,7 +130,7 @@ export function BackgroundCircles({
       <AnimatedGrid reducedMotion={reducedMotion} />
 
       <motion.div className="absolute inset-0">
-        {[0, 1, 2].map((i) => (
+        {(backgroundOnly ? [0] : [0, 1, 2]).map((i) => (
           <motion.div
             key={i}
             className={cn(

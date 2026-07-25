@@ -5,7 +5,6 @@ import { profile } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 import { ResumeViewer } from "@/components/ui/ResumeViewer";
 import { MinimalistHeroPortrait } from "@/components/ui/minimalist-hero";
-import { WomanCodingAnimation } from "@/components/ui/woman-coding-animation";
 import { useHeroNavName } from "@/components/layout/HeroNavNameContext";
 import { useSplash } from "@/components/layout/SplashContext";
 import { usePrefersReducedMotion } from "@/lib/hooks";
@@ -74,9 +73,11 @@ export function Hero() {
             animate={{ opacity: showPortrait ? 1 : 0 }}
             transition={{ duration: 0.35, ease: motionEase }}
           >
-            <MinimalistHeroPortrait show={showPortrait}>
-              <WomanCodingAnimation />
-            </MinimalistHeroPortrait>
+            <MinimalistHeroPortrait
+              show={showPortrait}
+              imageSrc={profile.aboutPhotoUrl}
+              imageAlt={`${profile.name} portrait`}
+            />
           </motion.div>
 
           <div className="hero-copy">
@@ -102,6 +103,10 @@ export function Hero() {
             <motion.h2 className="text-hero-title" {...fadeUp(STAGGER * 2, 0.75)}>
               <span className="gradient-text">{profile.heroTitle}</span>
             </motion.h2>
+
+            <motion.p className="text-hero-focus" {...fadeUp(STAGGER * 2.5, 0.65)}>
+              {profile.heroFocus}
+            </motion.p>
 
             <motion.p className="text-hero-description" {...fadeUp(STAGGER * 3, 0.7)}>
               {profile.tagline}
