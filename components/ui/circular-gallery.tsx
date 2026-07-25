@@ -37,14 +37,9 @@ export interface CircularGalleryRef {
   rotateRight: () => void;
 }
 
-function getWrappedIndex(virtualIndex: number, count: number): number {
-  return ((virtualIndex % count) + count) % count;
-}
-
-function normalizePosition(position: number, count: number): number {
-  if (count <= 0) return position;
-  const normalized = position % count;
-  return normalized < 0 ? normalized + count : normalized;
+function clampPosition(position: number, count: number): number {
+  if (count <= 1) return 0;
+  return Math.min(Math.max(position, 0), count - 1);
 }
 
 function isInteractiveTarget(target: EventTarget | null): boolean {
@@ -82,6 +77,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
     const [manualActive, setManualActive] = useState(false);
     const animationFrameRef = useRef<number | null>(null);
     const manualTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const directionRef = useRef(1);
     const trackRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef(0);
     const dragRef = useRef({
@@ -91,14 +87,16 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
       startPosition: 0,
     });
     const { width: cardWidth, height: cardHeight, gap } = useCardMetrics();
+    const count = items.length;
 
     positionRef.current = position;
 
     useEffect(() => {
-      if (items.length > 0) {
-        setPosition(Math.floor(items.length / 2));
+      if (count > 0) {
+        setPosition(Math.floor(count / 2));
+        directionRef.current = 1;
       }
-    }, [items]);
+    }, [items, count]);
 
     const pauseAutoRotate = () => {
       setManualActive(true);
@@ -112,21 +110,32 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
 
     useImperativeHandle(ref, () => ({
       rotateLeft: () => {
-        setPosition((prev) => normalizePosition(prev - 1, items.length));
+        setPosition((prev) => clampPosition(prev - 1, count));
         pauseAutoRotate();
       },
       rotateRight: () => {
-        setPosition((prev) => normalizePosition(prev + 1, items.length));
+        setPosition((prev) => clampPosition(prev + 1, count));
         pauseAutoRotate();
       },
     }));
 
     useEffect(() => {
-      if (items.length === 0) return;
+      if (count <= 1) return;
 
       const autoRotate = () => {
         if (!manualActive) {
-          setPosition((prev) => normalizePosition(prev + autoRotateSpeed, items.length));
+          setPosition((prev) => {
+            const next = prev + autoRotateSpeed * directionRef.current;
+            if (next >= count - 1) {
+              directionRef.current = -1;
+              return count - 1;
+            }
+            if (next <= 0) {
+              directionRef.current = 1;
+              return 0;
+            }
+            return next;
+          });
         }
         animationFrameRef.current = requestAnimationFrame(autoRotate);
       };
@@ -141,10 +150,9 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
           clearTimeout(manualTimeoutRef.current);
         }
       };
-    }, [manualActive, autoRotateSpeed, items.length]);
+    }, [manualActive, autoRotateSpeed, count]);
 
     const cardStep = cardWidth + gap;
-    const count = items.length;
 
     const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
       if (count <= 1 || event.button !== 0 || isInteractiveTarget(event.target)) return;
@@ -172,7 +180,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
       }
 
       const deltaPosition = -deltaX / cardStep;
-      setPosition(dragRef.current.startPosition + deltaPosition);
+      setPosition(clampPosition(dragRef.current.startPosition + deltaPosition, count));
     };
 
     const finishDrag = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -188,26 +196,12 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
       }
 
       if (wasDragging) {
-        setPosition((prev) => normalizePosition(Math.round(prev), count));
+        setPosition((prev) => clampPosition(Math.round(prev), count));
         pauseAutoRotate();
       }
     };
 
-    if (items.length === 0) return null;
-    const center = Math.round(position * 1000) / 1000;
-    const visibleRadius = Math.min(3, Math.max(2, Math.ceil(count / 2)));
-    const virtualStart = Math.floor(center) - visibleRadius;
-    const virtualEnd = Math.floor(center) + visibleRadius;
-    const virtualSlides: { virtualIndex: number; item: GalleryItem; itemIndex: number }[] = [];
-
-    for (let virtualIndex = virtualStart; virtualIndex <= virtualEnd; virtualIndex += 1) {
-      const itemIndex = getWrappedIndex(virtualIndex, count);
-      virtualSlides.push({
-        virtualIndex,
-        item: items[itemIndex],
-        itemIndex,
-      });
-    }
+    if (count === 0) return null;
 
     return (
       <div
@@ -224,8 +218,8 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
           onPointerUp={finishDrag}
           onPointerCancel={finishDrag}
         >
-          {virtualSlides.map(({ virtualIndex, item, itemIndex }) => {
-            const relative = virtualIndex - position;
+          {items.map((item, itemIndex) => {
+            const relative = itemIndex - position;
             const absRelative = Math.abs(relative);
             const isActive = absRelative < 0.35;
             const translateX = relative * cardStep;
@@ -234,7 +228,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
 
             return (
               <div
-                key={`${item.id ?? item.title}-${virtualIndex}`}
+                key={item.id ?? `${item.title}-${itemIndex}`}
                 role="group"
                 aria-label={item.title}
                 className={cn("linear-gallery__slide", isActive && "linear-gallery__slide--active")}

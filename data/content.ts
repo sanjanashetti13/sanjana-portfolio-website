@@ -404,6 +404,72 @@ export const projects: Project[] = [
     screenshots: [],
   },
   {
+    slug: "semiconductor-sensor-data-platform",
+    section: "production",
+    typeBadge: "Data Engineering",
+    typeLabel: "PySpark · Azure · Power BI · AI ETL",
+    filters: ["Data Engineering", "AI", "ML"],
+    category: "Data Engineering",
+    tag: "Data Engineering",
+    title: "AI-Orchestrated Semiconductor Sensor Data Warehouse",
+    description:
+      "Manufacturing sensor data arrives as large, messy, high-dimensional batches that need cleaning, modeling, and queryability before yield and defect analysis. Built an end-to-end data engineering platform that ingests semiconductor sensor data, processes it at scale with PySpark, models a dimensional warehouse on Azure SQL, and embeds AI automation into the pipeline — for transformation-code generation, inline data quality scoring, and natural-language business insights — with Power BI dashboards for yield, defect, and equipment-health analytics.",
+    cardDescription:
+      "PySpark ETL + Azure star schema with AI-assisted cleaning, DQ monitoring, and NL insights.",
+    highlights: [
+      "Engineered an AI-orchestrated PySpark ETL pipeline on Databricks where an LLM generates cleaning logic from automated profiling, processing 3M+ semiconductor sensor records",
+      "Designed a star schema warehouse (6 fact/dimension tables) on Azure SQL Database for yield, defect, and equipment-health analytics",
+      "Built inline AI-driven data quality monitoring that scores and logs batch-level anomalies into a queryable warehouse table",
+      "Developed a Power BI dashboard plus a natural-language query interface (LLM + SQL agent) for ad hoc business insights",
+    ],
+    highlightPills: [
+      { label: "PySpark", variant: "accent" },
+      { label: "Azure SQL" },
+      { label: "Star Schema" },
+      { label: "Power BI" },
+      { label: "AI ETL" },
+      { label: "Data Quality" },
+    ],
+    highlightNote:
+      "AI is embedded in the pipeline itself — codegen, quality scoring, auto-docs, and NL-to-SQL — not bolted on as an afterthought.",
+    stack: [
+      "PySpark",
+      "Databricks",
+      "Azure SQL Database",
+      "Python",
+      "SQL",
+      "Power BI",
+      "Parquet",
+      "LangChain",
+      "LLM APIs",
+      "Star Schema",
+    ],
+    github: null,
+    demo: null,
+    paper: null,
+    report: null,
+    metrics: ["3M+ Records", "Star Schema (6 Tables)", "AI Data Quality Logs", "Power BI + NL Query"],
+    imageUrl: null,
+    role: "Data Engineer",
+    status: "Completed",
+    badge: null,
+    year: "2026",
+    teamSize: 1,
+    context: "Personal Project",
+    problem:
+      "Semiconductor manufacturing sensor data arrives as large, messy, high-dimensional batches — hundreds of channels per reading — that are slow to clean, model, and document manually before yield and defect analysis can begin.",
+    solution:
+      "Built a PySpark ETL platform on Databricks ingesting UCI SECOM plus synthetic fab telemetry into a landing zone, with LLM-assisted transformation codegen, inline AI data-quality scoring, a star schema warehouse on Azure SQL, auto-generated data dictionaries, Power BI analytics, and an NL-to-SQL query agent.",
+    impact:
+      "Turned raw fab sensor streams into a queryable analytics warehouse with automated quality monitoring and natural-language insights — accelerating transformation work while keeping dimensional modeling and warehousing fundamentals first-class.",
+    challenges:
+      "Balancing AI-generated transformation logic with reviewable, interview-ready ETL code meant every LLM suggestion had to be understood and adapted. Designing a star schema that supported both yield analytics and a first-class data-quality fact table required careful modeling trade-offs.",
+    learnings:
+      "Learned that AI belongs inside the data engineering workflow — profiling→codegen, batch DQ logging, and NL query — only when grounded in solid warehousing design and honest documentation of real vs synthetic data sources.",
+    timeline: "2026",
+    screenshots: [],
+  },
+  {
     slug: "alumni-setu",
     section: "production",
     typeBadge: "Full Stack",
@@ -740,12 +806,58 @@ export const projects: Project[] = [
 ];
 
 export const skills = [
-  { category: "Languages", items: ["Python", "C++", "JavaScript", "HTML", "CSS"] },
-  { category: "Frameworks & Libraries", items: ["React.js", "Node.js", "FastAPI", "LangChain", "Flutter"] },
-  { category: "AI / Machine Learning", items: ["Machine Learning", "Generative AI", "LLMs", "RAG", "EDA"] },
-  { category: "Backend & Architecture", items: ["REST APIs", "Microservices", "Full-Stack Dev", "Blockchain"] },
-  { category: "Databases", items: ["MongoDB", "MSSQL", "Schema Design", "Prisma", "PostgreSQL", "MYSQL"] },
-  { category: "Tools & Platforms", items: ["Git", "Linux", "Ansible", "CI/CD", "Vercel"] },
+  {
+    category: "Languages",
+    items: ["Python", "C++", "Java", "JavaScript", "SQL", "HTML", "CSS"],
+  },
+  {
+    category: "Frameworks & Libraries",
+    items: ["React.js", "Node.js", "FastAPI", "LangChain", "Flutter"],
+  },
+  {
+    category: "AI / Machine Learning",
+    items: [
+      "Machine Learning",
+      "Generative AI",
+      "LLMs",
+      "RAG",
+      "Prompt Engineering",
+      "FAISS",
+      "XGBoost",
+      "EDA",
+      "Power BI",
+    ],
+  },
+  {
+    category: "Backend & Architecture",
+    items: [
+      "REST APIs",
+      "Microservices",
+      "Full-Stack Dev",
+      "Blockchain",
+      "ETL Pipelines",
+      "Informatica IDMC",
+      "Apache Spark",
+      "PySpark",
+    ],
+  },
+  {
+    category: "Databases",
+    items: [
+      "PostgreSQL",
+      "MySQL",
+      "MongoDB",
+      "MSSQL",
+      "Prisma",
+      "Schema Design",
+      "Data Modelling",
+      "Data Warehousing",
+    ],
+  },
+  {
+    category: "Tools & Platforms",
+    items: ["Git", "GitHub", "Linux", "Docker", "Ansible", "CI/CD", "Vercel"],
+  },
 ];
 
 export type AchievementEntry = {
