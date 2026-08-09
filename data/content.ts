@@ -450,8 +450,8 @@ export const projects: Project[] = [
       "CI/CD",
       "OIDC",
     ],
-    github: null,
-    demo: null,
+    github: "https://github.com/sanjanashetti13/semiconductor-data-plateform",
+    demo: "https://semiconductor-ai-sanjana-acexfdc7g7gfayay.centralindia-01.azurewebsites.net/",
     paper: null,
     report: null,
     metrics: [

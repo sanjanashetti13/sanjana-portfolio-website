@@ -49,7 +49,7 @@ export function projectToGalleryItem(project: Project): GalleryItem {
     title: project.title,
     subtitle: getProjectLabel(project),
     cardDescription: project.cardDescription,
-    meta: `${project.year} · ${project.context}`,
+    meta: [project.year, project.context].filter(Boolean).join(" · "),
     accentColor: theme.color,
     glowColor: theme.glow,
     highlightPills: project.highlightPills.slice(0, 5),
