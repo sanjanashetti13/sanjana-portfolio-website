@@ -92,10 +92,14 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
     positionRef.current = position;
 
     useEffect(() => {
-      if (count > 0) {
-        setPosition(Math.floor(count / 2));
-        directionRef.current = 1;
+      if (count <= 0) return;
+      // With 1–2 cards, keep a static centered layout (no carousel motion).
+      if (count <= 2) {
+        setPosition(count === 1 ? 0 : 0.5);
+        return;
       }
+      setPosition(Math.floor(count / 2));
+      directionRef.current = 1;
     }, [items, count]);
 
     const pauseAutoRotate = () => {
@@ -110,17 +114,19 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
 
     useImperativeHandle(ref, () => ({
       rotateLeft: () => {
+        if (count <= 2) return;
         setPosition((prev) => clampPosition(prev - 1, count));
         pauseAutoRotate();
       },
       rotateRight: () => {
+        if (count <= 2) return;
         setPosition((prev) => clampPosition(prev + 1, count));
         pauseAutoRotate();
       },
     }));
 
     useEffect(() => {
-      if (count <= 1) return;
+      if (count <= 2) return;
 
       const autoRotate = () => {
         if (!manualActive) {
@@ -155,7 +161,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
     const cardStep = cardWidth + gap;
 
     const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-      if (count <= 1 || event.button !== 0 || isInteractiveTarget(event.target)) return;
+      if (count <= 2 || event.button !== 0 || isInteractiveTarget(event.target)) return;
 
       dragRef.current = {
         pointerDown: true,
@@ -166,7 +172,7 @@ const CircularGallery = React.forwardRef<CircularGalleryRef, CircularGalleryProp
     };
 
     const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-      if (!dragRef.current.pointerDown || count <= 1) return;
+      if (!dragRef.current.pointerDown || count <= 2) return;
 
       const deltaX = event.clientX - dragRef.current.startX;
 

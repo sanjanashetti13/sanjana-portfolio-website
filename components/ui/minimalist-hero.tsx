@@ -62,19 +62,18 @@ export function MinimalistHeroPortrait({
   return (
     <div className={cn("relative flex h-full w-full items-center justify-center", className)}>
       <motion.div
-        initial={{ scale: 0.85, opacity: 0 }}
+        initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-        className="relative h-[min(300px,74vw)] w-[min(300px,74vw)] overflow-hidden rounded-full border border-white/15 bg-[#141218] md:h-[min(400px,38vw)] md:w-[min(400px,38vw)] lg:h-[min(480px,30vw)] lg:w-[min(480px,30vw)]"
+        className="relative flex h-[min(340px,78vw)] w-[min(260px,64vw)] items-center justify-center md:h-[min(440px,42vw)] md:w-[min(340px,30vw)] lg:h-[min(520px,34vw)] lg:w-[min(400px,24vw)]"
       >
-        {/* Soft ambient fill */}
         <motion.div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(168,85,247,0.22),transparent_62%)]"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[75%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.3),transparent_70%)] blur-3xl"
           aria-hidden="true"
           animate={
             reducedMotion
               ? undefined
-              : { opacity: [0.55, 1, 0.55], scale: [1, 1.04, 1] }
+              : { opacity: [0.4, 0.8, 0.4], scale: [0.95, 1.08, 0.95] }
           }
           transition={
             reducedMotion
@@ -83,49 +82,14 @@ export function MinimalistHeroPortrait({
           }
         />
 
-        {/* Neon halo ring behind the photo */}
-        <motion.div
-          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[68%] w-[68%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          aria-hidden="true"
-          style={{
-            boxShadow: `
-              0 0 0 3px rgba(255, 255, 255, 0.92),
-              0 0 14px 4px rgba(216, 180, 254, 0.95),
-              0 0 36px 12px rgba(168, 85, 247, 0.7),
-              0 0 70px 24px rgba(147, 51, 234, 0.35),
-              inset 0 0 18px 2px rgba(243, 232, 255, 0.45)
-            `,
-          }}
-          animate={
-            reducedMotion
-              ? undefined
-              : {
-                  scale: [1, 1.06, 1],
-                  opacity: [0.75, 1, 0.75],
-                  rotate: [0, 180, 360],
-                }
-          }
-          transition={
-            reducedMotion
-              ? undefined
-              : {
-                  scale: { duration: 3.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-                  opacity: { duration: 3.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-                  rotate: { duration: 18, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
-                }
-          }
-        />
-
         {children ?? (
-          <motion.img
-            src={imageSrc}
-            alt={imageAlt ?? "Hero portrait"}
-            className="absolute inset-x-0 bottom-0 top-auto z-10 mx-auto h-[100%] w-full object-contain object-bottom drop-shadow-[0_12px_28px_rgba(0,0,0,0.55)]"
-            initial={{ opacity: 0, y: 16 }}
+          <motion.div
+            className="relative z-10 flex h-full w-full items-center justify-center"
+            initial={{ opacity: 0, y: 16, rotate: 0 }}
             animate={
               reducedMotion
-                ? { opacity: 1, y: 0 }
-                : { opacity: 1, y: [0, -8, 0] }
+                ? { opacity: 1, y: 0, rotate: 0 }
+                : { opacity: 1, y: [0, -8, 0], rotate: 0 }
             }
             transition={
               reducedMotion
@@ -140,12 +104,42 @@ export function MinimalistHeroPortrait({
                     },
                   }
             }
-            onError={(event) => {
-              const target = event.target as HTMLImageElement;
-              target.onerror = null;
-              target.src = "/avatar/sanjana.png";
-            }}
-          />
+          >
+            {/* Thin silhouette backdrop that follows the cutout outline */}
+            <img
+              src={imageSrc}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0 m-auto h-full w-full scale-[1.045] object-contain object-center [image-orientation:none]"
+              style={{
+                filter:
+                  "brightness(0) saturate(100%) invert(72%) sepia(28%) saturate(1200%) hue-rotate(220deg) brightness(1.05)",
+                opacity: 0.9,
+              }}
+              onError={(event) => {
+                const target = event.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = "/avatar/sanjana.png";
+              }}
+            />
+            <img
+              src={imageSrc}
+              alt={imageAlt ?? "Hero portrait"}
+              className="relative z-10 h-full w-full object-contain object-center [image-orientation:none]"
+              style={{
+                filter: `
+                  drop-shadow(0 0 1px rgba(255, 255, 255, 0.9))
+                  drop-shadow(0 0 10px rgba(216, 180, 254, 0.75))
+                  drop-shadow(0 0 24px rgba(168, 85, 247, 0.45))
+                `,
+              }}
+              onError={(event) => {
+                const target = event.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = "/avatar/sanjana.png";
+              }}
+            />
+          </motion.div>
         )}
       </motion.div>
     </div>
