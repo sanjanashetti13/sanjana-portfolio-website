@@ -932,14 +932,14 @@ export const certificates: CertificateEntry[] = [
     issuer: "Hugging Face",
     issued: "Aug 2026",
     credentialId: "sanjanashetti",
-    logoUrl: "/logos/huggingface.svg",
+    logoUrl: "/logos/huggingface.png",
     certificateUrl: "/certificates/huggingface-agents-fundamentals.png",
   },
   {
     title: "Intelligent Data Management Cloud (IDMC) Foundation",
     issuer: "Informatica",
     issued: "Aug 2026",
-    logoUrl: "/logos/informatica.svg",
+    logoUrl: "/logos/informatica.png",
     certificateUrl: "/certificates/informatica-idmc-foundation.png",
   },
   {
