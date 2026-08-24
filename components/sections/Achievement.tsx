@@ -22,8 +22,20 @@ export function Achievement() {
               <div key={item.title} className="achievement-card">
                 <div className="achievement-card-grid">
                   <div className="achievement-rank">
-                    <p className="achievement-rank-value">{item.rank}</p>
-                    <p className="achievement-rank-scope">{item.scope}</p>
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt={`${item.title} award ceremony`}
+                        className="achievement-rank-image"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <>
+                        <p className="achievement-rank-value">{item.rank}</p>
+                        <p className="achievement-rank-scope">{item.scope}</p>
+                      </>
+                    )}
                   </div>
                   <div className="achievement-copy">
                     <h3 className="achievement-card-title">{item.title}</h3>

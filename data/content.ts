@@ -878,6 +878,7 @@ export type AchievementEntry = {
   title: string;
   description: string;
   prize: string;
+  imageUrl?: string | null;
   github?: string | null;
   paper?: string | null;
 };
@@ -890,8 +891,18 @@ export const achievements: AchievementEntry[] = [
     description:
       "Placed in the top 3 of 500+ teams nationwide with an AI-driven smart water distribution system — improving allocation accuracy to 90% across zones.",
     prize: "₹50,000 Award",
+    imageUrl: "/achievements/samved-hackathon-2026.png",
     github: "https://github.com/Team-HydroOps/HydroOps",
     paper: "/reports/HydroOps-report.pdf",
+  },
+  {
+    rank: "Resource Person",
+    scope: "KLE Tech",
+    title: "Python Workshop — Resource Person",
+    description:
+      "Served as a Resource Person at KLE Technological University on 15 March 2026, conducting a Python workshop for junior students covering programming fundamentals, data structures, and libraries including NumPy, Pandas, Matplotlib, and OpenCV.",
+    prize: "Certificate",
+    imageUrl: "/achievements/python-workshop-2026.png",
   },
   {
     rank: "96%",

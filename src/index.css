@@ -1432,6 +1432,13 @@ h6,
   }
 }
 
+.achievement-rank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .achievement-rank-value {
   font-family: var(--font-display), system-ui, sans-serif;
   font-size: clamp(48px, 8vw, 72px);
@@ -1448,6 +1455,23 @@ h6,
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-faint);
+}
+
+.achievement-rank-image {
+  display: block;
+  width: min(220px, 72vw);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 768px) {
+  .achievement-rank-image {
+    width: 180px;
+  }
 }
 
 .achievement-card-title {
