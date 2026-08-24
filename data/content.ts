@@ -881,6 +881,7 @@ export type AchievementEntry = {
   imageUrl?: string | null;
   github?: string | null;
   paper?: string | null;
+  certificateUrl?: string | null;
 };
 
 export const achievements: AchievementEntry[] = [
@@ -890,8 +891,9 @@ export const achievements: AchievementEntry[] = [
     title: "Samved Hackathon 2026",
     description:
       "Placed in the top 3 of 500+ teams nationwide with an AI-driven smart water distribution system — improving allocation accuracy to 90% across zones.",
-    prize: "₹50,000 Award",
+    prize: "Certificate",
     imageUrl: "/achievements/samved-hackathon-2026.png",
+    certificateUrl: "/achievements/samved-hackathon-certificate.png",
     github: "https://github.com/Team-HydroOps/HydroOps",
     paper: "/reports/HydroOps-report.pdf",
   },
@@ -903,6 +905,7 @@ export const achievements: AchievementEntry[] = [
       "Served as a Resource Person at KLE Technological University on 15 March 2026, conducting a Python workshop for junior students covering programming fundamentals, data structures, and libraries including NumPy, Pandas, Matplotlib, and OpenCV.",
     prize: "Certificate",
     imageUrl: "/achievements/python-workshop-2026.png",
+    certificateUrl: "/achievements/python-workshop-certificate.png",
   },
   {
     rank: "96%",
@@ -911,6 +914,49 @@ export const achievements: AchievementEntry[] = [
     description:
       "Scored 96% in the PUC II board examination at Vidyaniketan PU Science College, Hubli, Karnataka.",
     prize: "Distinction",
+  },
+];
+
+export type CertificateEntry = {
+  title: string;
+  issuer: string;
+  issued: string;
+  credentialId?: string | null;
+  logoUrl: string;
+  certificateUrl: string;
+};
+
+export const certificates: CertificateEntry[] = [
+  {
+    title: "AI Agents Fundamentals",
+    issuer: "Hugging Face",
+    issued: "Aug 2026",
+    credentialId: "sanjanashetti",
+    logoUrl: "/logos/huggingface.svg",
+    certificateUrl: "/certificates/huggingface-agents-fundamentals.png",
+  },
+  {
+    title: "Intelligent Data Management Cloud (IDMC) Foundation",
+    issuer: "Informatica",
+    issued: "Aug 2026",
+    logoUrl: "/logos/informatica.svg",
+    certificateUrl: "/certificates/informatica-idmc-foundation.png",
+  },
+  {
+    title: "Academy Accreditation — Databricks Fundamentals",
+    issuer: "Databricks",
+    issued: "Aug 2026",
+    credentialId: "190797049",
+    logoUrl: "/logos/databricks.svg",
+    certificateUrl: "https://credentials.databricks.com/bc0bb754-5d8b-46ea-a07c-4ebe82c26d35",
+  },
+  {
+    title: "Introduction to Generative AI",
+    issuer: "Google",
+    issued: "Mar 2026",
+    credentialId: "22847751",
+    logoUrl: "/logos/google.svg",
+    certificateUrl: "https://www.skills.google/public_profiles/790255e2-d577-4e27-98a4-4df969ba9247/badges/22847751",
   },
 ];
 

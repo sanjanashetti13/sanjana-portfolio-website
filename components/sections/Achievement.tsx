@@ -68,7 +68,18 @@ export function Achievement() {
                     )}
                   </div>
                   <div className="achievement-prize-wrap">
-                    <span className="achievement-prize">{item.prize}</span>
+                    {item.certificateUrl ? (
+                      <a
+                        href={item.certificateUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="achievement-prize"
+                      >
+                        {item.prize}
+                      </a>
+                    ) : (
+                      <span className="achievement-prize">{item.prize}</span>
+                    )}
                   </div>
                 </div>
               </div>

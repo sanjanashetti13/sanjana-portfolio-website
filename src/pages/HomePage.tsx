@@ -5,6 +5,7 @@ import { Experience } from "@/components/sections/Experience";
 import { Projects } from "@/components/sections/Projects";
 import { GitHubActivitySection } from "@/components/sections/GitHubActivity";
 import { Skills } from "@/components/sections/Skills";
+import { Certificates } from "@/components/sections/Certificates";
 import { Achievement } from "@/components/sections/Achievement";
 import { Education } from "@/components/sections/Education";
 import { Contact } from "@/components/sections/Contact";
@@ -24,6 +25,7 @@ export function HomePage() {
         <Projects />
         <GitHubActivitySection />
         <Skills />
+        <Certificates />
         <Achievement />
         <Education />
         <Contact />
